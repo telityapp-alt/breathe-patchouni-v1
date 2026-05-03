@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@layer utilities {
+  @media print {
+    .print-hidden {
+      display: none !important;
+    }
+  }
+}
+
+@theme {
+  --color-brand: #22a074;
+  --color-brand-dark: #198059;
+  --color-brand-light: #2bc088;
+  --color-brand-surface: #e9f6f1;
+  --color-duo-green: #22a074; /* Alias for compatibility */
+  --color-duo-green-dark: #198059;
+  --color-duo-green-light: #2bc088;
+  --color-duo-blue: #1cb0f6;
+  --color-duo-blue-dark: #1899d6;
+  --color-duo-orange: #ff9600;
+  --color-duo-orange-dark: #cc7800;
+  --color-duo-yellow: #ffc800;
+  --color-duo-yellow-dark: #cc9f00;
+  --color-duo-red: #ff4b4b;
+  --color-duo-red-dark: #cc3c3c;
+  --font-sans: 'Google Sans', system-ui, sans-serif;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar,
+  * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .bg-brand-3d {
+    background-color: var(--color-brand) !important;
+    box-shadow: 0 4px 0 var(--color-brand-dark) !important;
+    border: none !important;
+  }
+  
+  /* Apply Duolingo card styling to all white rounded elements */
+  .bg-white.rounded-xl,
+  .bg-white.rounded-2xl,
+  .bg-white.rounded-3xl {
+    border: 2px solid #E5E7EB;
+    box-shadow: 0 4px 0 #E5E7EB;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  
+  /* Make clickable white rounded elements bouncy */
+  button.bg-white.rounded-xl:active,
+  button.bg-white.rounded-2xl:active,
+  button.bg-white.rounded-3xl:active,
+  .cursor-pointer.bg-white.rounded-xl:active,
+  .cursor-pointer.bg-white.rounded-2xl:active,
+  .cursor-pointer.bg-white.rounded-3xl:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 #E5E7EB !important;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply text-white font-bold py-3 px-5 flex items-center justify-center gap-2 transition-transform bg-brand cursor-pointer select-none border-2 border-brand-dark rounded-xl;
+    box-shadow: 0 4px 0 var(--color-brand-dark);
+  }
+  .btn-primary:active, .btn-primary[data-pressed="true"] {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 var(--color-brand-dark);
+  }
+  .btn-outline {
+    @apply bg-white text-gray-500 font-bold py-3 px-5 border-2 border-gray-200 flex items-center justify-center gap-2 transition-transform cursor-pointer select-none rounded-xl;
+    box-shadow: 0 4px 0 #E5E7EB;
+  }
+  .btn-outline:active, .btn-outline[data-pressed="true"] {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 #E5E7EB;
+  }
+  .btn-outline-active {
+    @apply bg-brand-surface text-brand font-bold py-3 px-5 border-2 border-brand flex items-center justify-center gap-2 transition-transform cursor-pointer select-none rounded-xl;
+    box-shadow: 0 4px 0 var(--color-brand-dark);
+  }
+  .btn-outline-active:active, .btn-outline-active[data-pressed="true"] {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 var(--color-brand-dark);
+  }
+  .card-duo {
+    @apply p-4 bg-white border-2 border-gray-200 rounded-2xl;
+    box-shadow: 0 4px 0 #E5E7EB;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  .card-duo.cursor-pointer:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 #E5E7EB !important;
+  }
+  .card-duo-active {
+    @apply p-4 bg-brand-surface border-2 border-brand rounded-2xl;
+    box-shadow: 0 4px 0 var(--color-brand-dark);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  .card-duo-active.cursor-pointer:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 var(--color-brand-dark) !important;
+  }
+  .icon-solid {
+    @apply flex items-center justify-center text-white shrink-0 bg-brand rounded-xl border-2 border-brand-dark;
+    box-shadow: 0 4px 0 var(--color-brand-dark);
+  }
+}
+
+@keyframes wave {
+  0% { transform: translateY(20%); }
+  50% { transform: translateY(-10%); }
+  100% { transform: translateY(20%); }
+}
+
+.animate-wave {
+  animation: wave 4s ease-in-out infinite alternate;
+}
+
+body {
+  font-family: 'Google Sans', system-ui, sans-serif;
+  color: #374151;
+  background-color: #fafafa;
+}
