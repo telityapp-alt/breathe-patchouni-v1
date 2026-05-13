@@ -56,18 +56,23 @@ export function useBluetoothInhaler() {
   }, [triggerLog]);
 
   useEffect(() => {
-    const handleFirstInteraction = () => {
+    const handleFirstInteraction = async (e: Event) => {
       if (isInitialized.current) return;
       isInitialized.current = true;
-
-      console.log('[BT Inhaler] First interaction detected, initializing audio...');
 
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
 
+      console.log('[BT Inhaler] First interaction detected, initializing audio...');
+
       try {
+        // KUNCI: AudioContext dibuat SYNCHRONOUS di sini, dalam callstack gesture yang sama
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
         const ctx = new AudioCtx();
+
+        // Resume explicitly — wajib di Chrome mobile
+        await ctx.resume();
+        console.log('[BT Inhaler] AudioContext state:', ctx.state);
 
         const buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
         const channelData = buffer.getChannelData(0);
@@ -87,36 +92,35 @@ export function useBluetoothInhaler() {
         audio.volume = 0.001;
         audio.loop = true;
 
-        audio
-          .play()
-          .then(() => {
-            audioRef.current = audio;
-            console.log('[BT Inhaler] Audio playing, setting up MediaSession...');
+        // play() dipanggil masih dalam async function yang triggered by gesture
+        await audio.play();
+        audioRef.current = audio;
+        console.log('[BT Inhaler] Audio playing, setting up MediaSession...');
 
-            if (!('mediaSession' in navigator)) {
-              console.warn('[BT Inhaler] MediaSession not supported on this browser.');
-              return;
-            }
+        if (!('mediaSession' in navigator)) {
+          console.warn('[BT Inhaler] MediaSession not supported.');
+          return;
+        }
 
-            navigator.mediaSession.metadata = new MediaMetadata({
-              title: 'Breathe AI Active',
-              artist: 'Inhaler Tracker',
-            });
-            navigator.mediaSession.playbackState = 'playing';
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Breathe AI Active',
+          artist: 'Inhaler Tracker',
+        });
+        navigator.mediaSession.playbackState = 'playing';
 
-            // Pakai wrapper ke ref — ini fix stale closure di MediaSession handler
-            const handler = () => triggerLogRef.current();
+        const handler = () => triggerLogRef.current();
 
-            try { navigator.mediaSession.setActionHandler('previoustrack', handler); } catch (e) {}
-            try { navigator.mediaSession.setActionHandler('nexttrack', handler); } catch (e) {}
-            try { navigator.mediaSession.setActionHandler('pause', handler); } catch (e) {}
-            try { navigator.mediaSession.setActionHandler('play', handler); } catch (e) {}
+        try { navigator.mediaSession.setActionHandler('previoustrack', handler); } catch (e) {}
+        try { navigator.mediaSession.setActionHandler('nexttrack', handler); } catch (e) {}
+        try { navigator.mediaSession.setActionHandler('pause', handler); } catch (e) {}
+        try { navigator.mediaSession.setActionHandler('play', handler); } catch (e) {}
 
-            console.log('[BT Inhaler] MediaSession handlers registered.');
-          })
-          .catch((e) => console.error('[BT Inhaler] Audio play failed:', e));
+        console.log('[BT Inhaler] MediaSession handlers registered.');
+
       } catch (e) {
-        console.error('[BT Inhaler] Audio context setup error:', e);
+        console.error('[BT Inhaler] Setup failed:', e);
+        // Reset flag biar bisa retry di interaction berikutnya
+        isInitialized.current = false;
       }
     };
 
