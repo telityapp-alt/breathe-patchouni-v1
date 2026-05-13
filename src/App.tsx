@@ -20,6 +20,9 @@ import MethodPage from "./pages/MethodPage";
 import InhalerPage from "./pages/InhalerPage";
 import { ShopPage } from "./pages/ShopPage";
 import { AuthPage } from "./pages/AuthPage";
+import { useBluetoothInhaler } from "./hooks/useBluetoothInhaler";
+import { AnimatePresence, motion } from "motion/react";
+import { CheckCircle2 } from "lucide-react";
 
 type Tab =
   | "home"
@@ -39,6 +42,9 @@ function MainApp() {
   const { state } = useAppContext();
   const { session, isGuest, loading } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("home");
+
+  // Mount the Bluetooth listener globally for the web app
+  const { notification } = useBluetoothInhaler();
 
   if (loading) {
     return (
@@ -101,6 +107,28 @@ function MainApp() {
           </button>
         </div>
       )}
+
+      {/* Bluetooth Inhaler Notification Popup */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-6 left-0 right-0 z-[200] flex justify-center px-4 pointer-events-none"
+          >
+            <div className="bg-white border-2 border-brand-dark shadow-[0_4px_0_var(--color-brand-dark)] rounded-2xl p-4 flex items-center gap-3 w-full max-w-sm">
+               <div className="w-10 h-10 rounded-full bg-brand-surface flex items-center justify-center shrink-0">
+                 <CheckCircle2 className="w-6 h-6 text-brand" />
+               </div>
+               <div>
+                  <h4 className="font-bold text-gray-900 text-sm">Inhaler Logged!</h4>
+                  <p className="text-xs text-brand font-bold uppercase tracking-wider">Breathe Smart Inhaler by Patchouni</p>
+               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Layout>
   );
 }
