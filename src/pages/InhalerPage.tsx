@@ -167,7 +167,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
       total: weeklyLogs.length,
       topVariant: topVarName,
       avgReduction: avgRed,
-      insight: `Minggu ini craving stresmu turun rata-rata ${avgRed} poin setiap kali pakai ${topVarName}.`,
+      insight: `This week your stress cravings decreased by an average of ${avgRed} points each time you used ${topVarName}.`,
     };
   }, [logs]);
 
@@ -187,13 +187,13 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
 
   const saveLog = async () => {
     if (inhalerAvailable && !variant)
-      return alert("Pilih varian inhaler yang dipakai");
+      return alert("Select the inhaler variant used");
     if (selectedContexts.length === 0)
-      return alert("Pilih minimal 1 konteks craving");
+      return alert("Select at least 1 craving context");
 
     let ctx = [...selectedContexts];
-    if (ctx.includes("Lainnya") && customContext) {
-      ctx = ctx.filter((c) => c !== "Lainnya");
+    if (ctx.includes("Other") && customContext) {
+      ctx = ctx.filter((c) => c !== "Other");
       ctx.push(customContext);
     }
 
@@ -246,11 +246,10 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
       {logs.length < 5 && (
         <div className="bg-brand-50 border border-brand-100 p-4 rounded-2xl mb-6 shadow-sm">
           <h3 className="font-bold text-brand-700 flex items-center gap-1">
-            <Zap className="w-4 h-4" /> AI Kalibrasi
+            <Zap className="w-4 h-4" /> AI Calibration
           </h3>
           <p className="text-sm font-medium text-brand-600 mt-1">
-            Log minimal 5 sesi untuk mendapat insight dan rekomendasi inhaler
-            personal dari AI.
+            Log at least 5 sessions to get insights and personal inhaler recommendations from AI.
           </p>
         </div>
       )}
@@ -259,15 +258,13 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
         <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-3 shadow-2xl shadow-gray-900/20 mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand/20 blur-3xl rounded-full"></div>
           <div className="flex items-center gap-2 text-brand-300 font-bold text-[10px] tracking-widest mb-3">
-            <BrainCircuit className="w-4 h-4" /> REKOMENDASI AI
+            <BrainCircuit className="w-4 h-4" /> AI RECOMMENDATION
           </div>
           <h3 className="text-white font-bold text-lg mb-2">
-            Untuk craving{" "}
-            <span className="text-brand-400">"{topContextName}"</span>,{" "}
-            {bestVariantForTopContext.name} terbukti paling efektif.
+            For <span className="text-brand-400">"{topContextName}"</span> cravings, {bestVariantForTopContext.name} has proven to be the most effective.
           </h3>
           <p className="text-gray-400 text-sm font-medium">
-            Siapkan varian ini sebelum situasi tersebut muncul lagi.
+            Keep this variant ready before that situation arises again.
           </p>
         </div>
       )}
@@ -294,7 +291,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                 {weeklyInsight.total}
               </span>
               <span className="text-[10px] font-bold text-gray-400">
-                Sesi
+                Sessions
               </span>
             </div>
             <div className="bg-white rounded-xl p-3 text-center">
@@ -305,7 +302,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                 {weeklyInsight.topVariant.split("-")[0]}
               </span>
               <span className="text-[10px] font-bold text-gray-400">
-                Top Varian
+                Top Variant
               </span>
             </div>
             <div className="bg-white rounded-xl p-3 text-center">
@@ -313,7 +310,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                 -{weeklyInsight.avgReduction}
               </span>
               <span className="text-[10px] font-bold text-gray-400">
-                Poin Craving
+                Craving Points
               </span>
             </div>
           </div>
@@ -326,7 +323,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
 
       <section className="mb-8">
         <h2 className="font-bold text-gray-800 mb-3 flex items-center justify-between">
-          Effectiveness per Varian
+          Effectiveness per Variant
           <span className="text-xs font-bold text-gray-400 tracking-widest">
             Scoreboard
           </span>
@@ -350,12 +347,12 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                   <h4 className="font-bold text-gray-800 text-sm">{v.name}</h4>
                   {v.stats.count > 0 ? (
                     <p className="text-xs font-bold text-brand-dark mt-0.5 tracking-tight flex items-center gap-0.5">
-                      <CheckCircle2 className="w-3 h-3" /> Turun{" "}
-                      {v.stats.avgReduction.toFixed(1)} poin rata-rata
+                      <CheckCircle2 className="w-3 h-3" /> Drops{" "}
+                      {v.stats.avgReduction.toFixed(1)} points on avg
                     </p>
                   ) : (
                     <p className="text-xs font-medium text-gray-400 mt-0.5">
-                      Belum dicoba
+                      Not Tried Yet
                     </p>
                   )}
                 </div>
@@ -373,7 +370,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
       {logs.length > 0 && (
         <section className="mb-8 card-duo">
           <h2 className="font-bold text-gray-800 text-sm mb-4">
-            Top Craving Contexts kamu:
+            Your Top Craving Contexts:
           </h2>
           <div className="space-y-3">
             {topContexts.map(([ctx, count], i) => (
@@ -557,7 +554,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                          onClick={() => setInhalerAvailable(false)}
                          className="text-xs font-bold text-gray-500 underline text-center w-full block hover:text-gray-700"
                        >
-                         Craving tapi inhaler gak ada?
+                         Craving but no inhaler?
                        </button>
                        <button onClick={() => { setShowLogModal(false); if(setActiveTab) setActiveTab('shop'); }} className="mt-2 bg-gradient-to-r from-brand to-brand-light text-white p-3 rounded-xl flex items-center justify-between shadow-[0_4px_0_var(--color-brand-dark)] active:translate-y-1 active:shadow-none transition-all">
                           <div>
@@ -576,23 +573,23 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                       <AlertCircle className="w-5 h-5" /> Sensory Hack Fallback
                     </h3>
                     <p className="text-sm font-medium text-brand-dark mb-3">
-                      Cobalah salah satu opsi ini berdasarkan situasimu:
+                      Try one of these options based on your situation:
                     </p>
                     <ul className="text-xs font-bold text-brand-dark space-y-2 mb-4">
                       <li>
-                        • Habis makan: Minum air es / kunyah permen karet kuat.
+                        • After eating: Drink ice water / chew strong gum.
                       </li>
                       <li>
-                        • Stres: Basuh wajah dengan air dingin / 4-7-8
+                        • Stressed: Wash face with cold water / 4-7-8
                         breathing.
                       </li>
-                      <li>• Bosan: Stretching 2 menit / jalan sedikit.</li>
+                      <li>• Bored: 2 minutes stretching / quick walk.</li>
                     </ul>
                     <button
                       onClick={() => setInhalerAvailable(true)}
                       className="btn-outline w-full bg-white border-brand/30 text-brand-dark"
                     >
-                      Kembali ke Inhaler
+                      Back to Inhaler
                     </button>
                   </div>
                 )}
@@ -600,7 +597,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
 
               <div>
                 <label className="block text-sm font-bold text-gray-800 mb-3">
-                  2. Konteks Craving (Bisa pilih &gt; 1)
+                  2. Craving Context (Select &gt; 1)
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {CONTEXTS.map((c) => (
@@ -623,7 +620,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                     type="text"
                     value={customContext}
                     onChange={(e) => setCustomContext(e.target.value)}
-                    placeholder="Tuliskan konteks..."
+                    placeholder="Write context..."
                     className="mt-3 w-full border border-gray-200 bg-gray-50 rounded-lg p-3 text-sm focus:border-brand focus:outline-none"
                   />
                 )}
@@ -631,10 +628,10 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
 
               <div>
                 <label className="block text-sm font-bold text-gray-800 mb-1">
-                  3. Intensitas *Sebelum* (1-10)
+                  3. Intensity *Before* (1-10)
                 </label>
                 <p className="text-xs text-gray-500 font-medium mb-3">
-                  Seberapa kuat keinginan merokoknya?
+                  How strong was the urge to smoke?
                 </p>
                 <div className="flex gap-4 items-center mb-2">
                   <span className="text-xs font-bold text-gray-400">Low</span>
@@ -654,10 +651,10 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
 
               <div>
                 <label className="block text-sm font-bold text-gray-800 mb-1">
-                  4. Intensitas *Sesudah* (1-10)
+                  4. Intensity *After* (1-10)
                 </label>
                 <p className="text-xs text-gray-500 font-medium mb-3">
-                  Isi langsung atau diamkan, kami akan ingatkan nanti.
+                  Fill it out now or skip it, we'll remind you later.
                 </p>
                 <div className="flex gap-4 items-center mb-2">
                   <span className="text-xs font-bold text-gray-400">Low</span>
@@ -678,7 +675,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                     onClick={() => setIntensityAfter(intensityBefore)}
                     className="text-xs font-bold text-brand bg-brand-50 px-3 py-1 rounded-full"
                   >
-                    Sama dengan Sebelum
+                    Same as Before
                   </button>
                 )}
               </div>
@@ -689,7 +686,7 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
                 onClick={saveLog}
                 className="btn-primary w-full shadow-brand/20"
               >
-                Simpan Log Inhaler
+                Save Inhaler Log
               </button>
             </div>
           </div>

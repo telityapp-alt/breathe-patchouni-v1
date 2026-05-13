@@ -218,10 +218,10 @@ export function HomePage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
          <section onClick={() => setActiveTab('inhaler')} className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-3 shadow-2xl shadow-gray-900/20 mb-6 cursor-pointer relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand/20 blur-3xl rounded-full group-hover:bg-brand/30 transition-colors"></div>
             <div className="flex items-center gap-2 text-brand-300 font-bold text-[10px] tracking-widest mb-2">
-               <BrainCircuit className="w-3 h-3" /> Rekomendasi Hari Ini
+               <BrainCircuit className="w-3 h-3" /> Today's Recommendation
             </div>
             <p className="text-white font-bold text-sm leading-snug">
-               Untuk craving <span className="text-brand-400">"{recommendedVariant.context}"</span>, <span className="text-brand-400">{recommendedVariant.variant}</span> kamu sudah siap?
+               For <span className="text-brand-400">"{recommendedVariant.context}"</span> cravings, is your <span className="text-brand-400">{recommendedVariant.variant}</span> ready?
             </p>
          </section>
       )}
@@ -284,7 +284,7 @@ export function HomePage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
              <Wind className="w-5 h-5 text-white" />
           </div>
           <h4 className="text-gray-500 text-xs font-bold mb-1 tracking-tight">Inhaler Dipakai</h4>
-          <span className="text-3xl font-bold text-gray-800 tracking-tight">{inhalerUsesThisWeek} <span className="text-sm font-medium text-gray-500 lowercase">kali mgg ini</span></span>
+          <span className="text-3xl font-bold text-gray-800 tracking-tight">{inhalerUsesThisWeek} <span className="text-sm font-medium text-gray-500 lowercase">times this week</span></span>
         </div>
       </section>
 
@@ -304,7 +304,7 @@ export function HomePage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
             </div>
         ) : insightError ? (
             <div className="text-gray-600 text-sm leading-relaxed font-medium">
-              <p>"Setiap langkah kecil adalah kemenangan. Tetap fokus pada tujuanmu, kamu pasti bisa."</p>
+              <p>"Every small step is a victory. Keep focusing on your goal, you can do this."</p>
               <span className="block mt-2 text-[10px] text-gray-400 font-bold tracking-widest">
                 *(AI Failed to Connect - Default motivation)*
               </span>

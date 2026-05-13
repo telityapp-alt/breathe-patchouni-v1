@@ -39,8 +39,8 @@ export const LEARN_CATALOG: LearnContent[] = [
   {
     id: 'story_arya1',
     type: 'Story',
-    title: 'Malam Pertama Tanpa Rokok',
-    shortDesc: 'Aku kira aku bakal gila pas jam 11 malam...',
+    title: 'First Night Without a Cigarette',
+    shortDesc: 'I thought I was going to lose my mind at 11 PM...',
     durationStr: '3 MIN READ',
     triggerRelevance: ['waking_up', 'night', 'stressed'],
     stageRelevance: [0, 7],
@@ -48,70 +48,70 @@ export const LEARN_CATALOG: LearnContent[] = [
     yearsSmoking: 8,
     quitMethod: 'Habit Replacement',
     storyContent: {
-      hook: "Aku kira aku bakal gila pas jam 11 malam. Udah terbiasa banget sebatang sebelum tidur, rasanya dada ini beneran ditarik-tarik.",
-      middle: "Malam pertama itu aku bolak-balik kasur sampai 10 kali. Berkali-kali aku jalan ke dapur, buka laci tempat biasa nyimpen rokok cadangan, tapi kosong. Aku coba minum air es, makan kuaci, sampai akhirnya aku push up 50 kali saking frustrasinya. Di hari ketiga, aku sempat relapse gara-gara dimarahin bos. Aku merasa gagal total.",
-      present: "Sekarang udah bulan kedua. Kadang kangen rasanya ditarik asap pas stres? Iya, masih. Tapi bedanya, sekarang aku tahu gelombang craving itu bakal hilang dalam 5 menit kalau aku cuekin. Gak sempurna, tapi sepadan.",
-      insight: "Craving itu seperti gelombang ombak; dia akan datang, memuncak, lalu pasti pecah dan hilang sendiri kalau kita tidak bereaksi."
+      hook: "I thought I was going to lose my mind at 11 PM. I was so used to having one before bed, it felt like my chest was physically being pulled.",
+      middle: "That first night, I tossed and turned in bed over 10 times. I went to the kitchen multiple times, opened the drawer where I usually kept my backup pack, but it was empty. I tried drinking ice water, eating seeds, until I eventually did 50 push-ups out of pure frustration. On the third day, I almost relapsed because my boss yelled at me. I felt like a total failure.",
+      present: "Now it's been two months. Do I still miss the feeling of smoke pulling me out of stress? Yes, sometimes. But the difference is, now I know the wave of a craving will pass in 5 minutes if I ignore it. It's not perfect, but it's worth it.",
+      insight: "A craving is like a wave; it will rise, peak, and eventually break and fade away on its own if we don't react."
     }
   },
   {
     id: 'doc_dopamine',
     type: 'Doctor Talks',
-    title: 'Siklus Dopamin di Otak Perokok',
-    shortDesc: 'Kenapa rasanya hampa tanpa nikotin?',
+    title: 'The Dopamine Cycle in a Smoker\'s Brain',
+    shortDesc: 'Why does it feel empty without nicotine?',
     durationStr: '2 MIN VIDEO',
     triggerRelevance: ['bored', 'stressed'],
     stageRelevance: [8, 30],
     doctorName: 'Dr. Andi Gunawan',
-    doctorSpecialty: 'Spesialis Kedokteran Jiwa (Psikiatri)',
-    keyTakeaway: 'Nikotin membajak sistem reward alami otakmu, butuh waktu sekitar 3-4 minggu agar reseptor dopamin kembali normal.',
-    transcript: 'Halo teman-teman. Pernahkah kalian merasa hampa atau kosong saat pertama kali berhenti merokok? Itu sangat wajar. Nikotin di dalam rokok bekerja dengan cara "membajak" sistem dopamin otak kita. Ibaratnya, otak kita yang biasanya bahagia gara-gara hal sederhana seperti makan enak atau ketawa bareng teman, sekarang cuma mau bahagia kalau ada nikotin. Saat nikotinnya di-stop, reseptor yang terlanjur terbiasa banjir dopamin ini jadi kebingungan dan berteriak minta nikotin lagi. Kabar baiknya, neuroplastisitas otak kita luar biasa. Dalam 3-4 minggu, jumlah reseptor ini akan pelan-pelan kembali normal, dan kalian akan mulai bisa merasakan kebahagiaan dari hal-hal kecil lagi.'
+    doctorSpecialty: 'Psychiatrist',
+    keyTakeaway: 'Nicotine hijacks your natural reward system. It takes about 3-4 weeks for your dopamine receptors to return to normal.',
+    transcript: 'Hello everyone. Have you ever felt empty or hollow when you first stopped smoking? That is completely normal. The nicotine in cigarettes works by "hijacking" our brain\'s dopamine system. Simply put, our brain, which usually feels happy from simple things like good food or laughing with friends, now only wants to feel happy if there is nicotine. When the nicotine stops, the receptors that are used to being flooded with dopamine get confused and scream for more nicotine. The good news is, our brain\'s neuroplasticity is amazing. In 3-4 weeks, the number of these receptors will slowly return to normal, and you will begin to feel happiness from the little things again.'
   },
   {
     id: 'micro_urge_surf',
     type: 'Micro-Lessons',
     title: 'Urge Surfing 101',
-    shortDesc: 'Belajar berselancar di atas rasa ingin merokok.',
+    shortDesc: 'Learn to surf over the urge to smoke.',
     durationStr: '4 CARDS',
     methodRelevance: ['act', 'mindfulness'],
     swipeCards: [
-      { illustrationRef: 'wave', title: 'Craving Itu Seperti Ombak', desc: 'Sama seperti ombak di laut, dorongan merokok itu mulai dari kecil, membesar hingga ke puncaknya, lalu pecah dan mereda.' },
-      { illustrationRef: 'resist', title: 'Jangan Dilawan, Diamati', desc: 'Makin keras kamu teriak "jangan merokok", otakmu makin fokus ke rokok. Triknya bukan melawan, tapi mengamati rasa gak nyaman itu.' },
-      { illustrationRef: 'body', title: 'Pindai Tubuhmu', desc: 'Saat craving datang, rasakan di mana nyerinya? Apakah dadamu sesak? Perutmu kaku? Tarik napas ke bagian itu.' },
-      { illustrationRef: 'ride', title: 'Berselancar Sampai Reda', desc: 'Tetap bersama rasa tidak nyaman itu. Ia tidak akan membunuhmu. Ia akan hilang dalam 3-5 menit.' }
+      { illustrationRef: 'wave', title: 'Cravings Are Like Waves', desc: 'Just like waves in the ocean, the urge to smoke starts small, grows to its peak, and then breaks and subsides.' },
+      { illustrationRef: 'resist', title: 'Don\'t Fight It, Observe It', desc: 'The harder you scream "don\'t smoke", the more your brain focuses on cigarettes. The trick isn\'t to fight, but to observe the discomfort.' },
+      { illustrationRef: 'body', title: 'Scan Your Body', desc: 'When a craving hits, feel where it hurts. Is your chest tight? Is your stomach tense? Breathe into that area.' },
+      { illustrationRef: 'ride', title: 'Ride It Out', desc: 'Stay with the discomfort. It won\'t kill you. It will disappear in 3-5 minutes.' }
     ],
-    reflectionQuestion: 'Apa sensasi fisik paling kuat saat kamu ingin merokok?'
+    reflectionQuestion: 'What is the strongest physical sensation when you want to smoke?'
   },
   {
     id: 'science_stress',
     type: 'Science Bites',
-    title: 'Paradoks Stres',
-    shortDesc: 'Kenapa rokok terasa menghilangkan stres padahal tidak?',
+    title: 'The Stress Paradox',
+    shortDesc: 'Why do cigarettes feel like stress relievers when they aren\'t?',
     durationStr: '1 MIN',
     triggerRelevance: ['stressed'],
     scienceStat: '+73%',
-    scienceContext: 'Rokok TIDAK benar-benar menghilangkan stres hidupmu. Saat kamu stres lalu merokok dan merasa lega, yang sebenarnya hilang adalah STRES WITHDRAWAL NIKOTIN akibat kamu kelamaan gak merokok. Detak jantung perokok justru 73% lebih cepat dan tingkat kecemasan baseline-nya lebih tinggi dibanding non-perokok.'
+    scienceContext: 'Cigarettes DO NOT actually relieve your life\'s stress. When you are stressed, then smoke, and feel relieved, what is actually disappearing is the NICOTINE WITHDRAWAL STRESS because you haven\'t smoked for a while. A smoker\'s heart rate is actually 73% faster and their baseline anxiety level is higher compared to non-smokers.'
   },
   {
     id: 'read_trigger_mapping',
     type: 'Reads',
-    title: 'Anatomi Sebuah Trigger',
-    shortDesc: 'Gimana cara tahu pola merokokmu sebelum terlambat.',
+    title: 'Anatomy of a Trigger',
+    shortDesc: 'How to know your smoking patterns before it\'s too late.',
     durationStr: '4 MIN READ',
     methodRelevance: ['cbt', 'habit'],
     readContent: [
       {
-        sectionTitle: "Kenapa Kita Kayak Robot?",
+        sectionTitle: "Why Are We Like Robots?",
         paragraphs: [
-          "Pernah nggak kamu lagi nongkrong, tiba-tiba di tanganmu udah ada rokok yang nyala, padahal kamu nggak ingat kapan ambilnya? Itulah yang disebut automatic behavior.",
-          "Otak kita itu malas. Untuk menghemat energi, otak membuat shortcut atau jalan pintas untuk hal-hal yang sering kita lakukan. Kalau kamu selalu merokok setelah makan selama 5 tahun, otak otomatis menyambungkan kabel 'selesai makan' langsung ke 'nyalakan rokok'."
+          "Have you ever been hanging out, and suddenly there's a lit cigarette in your hand, even though you don't remember when you grabbed it? That is called automatic behavior.",
+          "Our brains are lazy. To save energy, the brain creates shortcuts for things we do often. If you have always smoked after eating for 5 years, the brain automatically wires 'finished eating' directly to 'light a cigarette'."
         ]
       },
       {
-        sectionTitle: "Memecah Rantai Kebiasaan",
+        sectionTitle: "Breaking the Habit Chain",
         paragraphs: [
-          "Untuk memutus rantai ini, kamu harus memindahkan tindakan merokok dari unconscious mind (pikiran tak sadar) ke conscious mind (pikiran sadar).",
-          "Caranya? Setiap kali dorongan itu datang, STOP selama 10 detik. Tanyakan: 'Apa yang memicu ini? Apakah aku baru aja selesai presentasi? Atau aku cuman bosen?'"
+          "To break this chain, you have to move the act of smoking from the unconscious mind to the conscious mind.",
+          "How? Every time the urge comes, STOP for 10 seconds. Ask: 'What triggered this? Did I just finish a presentation? Or am I just bored?'"
         ]
       }
     ]
@@ -119,15 +119,15 @@ export const LEARN_CATALOG: LearnContent[] = [
   {
     id: 'micro_cbt_reframe',
     type: 'Micro-Lessons',
-    title: 'Jurus Reframe Pikiran',
-    shortDesc: 'Ubah pikiran sabotase jadi kekuatan.',
+    title: 'The Thought Reframe Technique',
+    shortDesc: 'Turn sabotaging thoughts into strength.',
     durationStr: '3 CARDS',
     methodRelevance: ['cbt'],
     swipeCards: [
-      { illustrationRef: 'brain', title: 'Pikiran Sabotase', desc: 'Pernah dengar suara di kepalamu yang bilang: "Satu batang doang nggak bakal ngerusak progress kok"? Itu namanya pikiran sabotase.' },
-      { illustrationRef: 'switch', title: 'Tangkap dan Sadari', desc: 'Langkah pertama adalah menyadari saat suara itu muncul. Jangan dipercaya begitu saja. Pikiran bukanlah fakta.' },
-      { illustrationRef: 'reframe', title: 'Putar Balik (Reframe)', desc: 'Balas suara itu dengan fakta: "Satu batang HARI INI mungkin gampang, tapi satu batang besok dan lusa akan mengembalikan aku ke titik nol."' }
+      { illustrationRef: 'brain', title: 'Sabotaging Thoughts', desc: 'Have you ever heard a voice in your head saying: "Just one cigarette won\'t ruin my progress"? That\'s a sabotage thought.' },
+      { illustrationRef: 'switch', title: 'Catch and Realize', desc: 'The first step is to realize when that voice appears. Don\'t just believe it. Thoughts are not facts.' },
+      { illustrationRef: 'reframe', title: 'Reframe It', desc: 'Counter that voice with facts: "One cigarette TODAY might be easy, but one cigarette tomorrow and the day after will bring me back to zero."' }
     ],
-    reflectionQuestion: 'Apa kebohongan paling sering yang kamu ucapkan ke diri sendiri buat merokok?'
+    reflectionQuestion: 'What is the most common lie you tell yourself to smoke?'
   }
 ];

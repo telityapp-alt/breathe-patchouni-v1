@@ -4,8 +4,6 @@ import { useAppContext } from '../store/AppContext';
 /**
  * Hook to intercept volume button presses (often sent by Bluetooth shutters/clickers)
  * and automatically log an inhaler usage.
- * 
- * Works best when the web app is in the foreground and focused.
  */
 export function useBluetoothInhaler() {
   const { addInhalerLog } = useAppContext();
@@ -14,25 +12,27 @@ export function useBluetoothInhaler() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Many Bluetooth camera shutters send "VolumeUp", "AudioVolumeUp", or even "Enter"
-      const isVolumeKey = [
-        'AudioVolumeUp',
-        'AudioVolumeDown',
-        'VolumeUp',
-        'VolumeDown',
-        'MediaTrackNext',
-        'MediaPlayPause'
-      ].includes(e.key);
+      // Prevent triggering if user is actively typing in an input
+      const target = e.target as HTMLElement;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
+        return;
+      }
 
-      // If you are using a generic clicker that sends "Enter" or Space, be careful as it 
-      // might interfere with form inputs, hence focusing specifically on Media/Volume keys.
+      const key = e.key?.toLowerCase();
+      // Most bluetooth shutters send VolumeUp/AudioVolumeUp
+      const isVolumeKey = [
+        'audiovolumeup',
+        'audiovolumedown',
+        'volumeup',
+        'volumedown',
+        'mediatracknext',
+        'mediaplaypause'
+      ].includes(key);
 
       if (isVolumeKey) {
-        // Optionally try to prevent system volume change UI from showing
-        // Note: Mobile browsers often restrict preventing volume default behaviors.
         // Try/catch just in case.
         try {
-           // We do not preventDefault here so it doesn't break OS-level media stuff completely if unsupported.
+           // Do not universally preventDefault on volume keys, some OS might hate it, but try for web
         } catch(err){}
 
         const now = Date.now();
@@ -40,13 +40,17 @@ export function useBluetoothInhaler() {
         if (now - lastLogTime.current > 2000) { 
           lastLogTime.current = now;
           
+          // Automatic everything bypass
           addInhalerLog({
             timestamp: new Date().toISOString(),
-            variantUsed: 'cool_mint', // Automatically assigned for smart inhaler
-            notes: 'Auto-logged via Breathe AI Smart Inhaler (Bluetooth)'
+            variantUsed: 'automatic_bypass',
+            cravingContexts: ['Automatic'],
+            intensityBefore: 5,
+            intensityAfter: 5,
+            notes: 'Automatic everything bypass.'
           });
           
-          console.log('Bluetooth Inhaler trigger detected! Logged successfully.');
+          console.log('Bluetooth Inhaler trigger detected! Automatic everything bypass.');
           
           setNotification({ show: true, time: now });
 
@@ -67,7 +71,7 @@ export function useBluetoothInhaler() {
     if (notification.show) {
       timeout = setTimeout(() => {
         setNotification(prev => ({ ...prev, show: false }));
-      }, 3000); // hide after 3 seconds
+      }, 3500); // hide after 3.5 seconds
     }
     return () => clearTimeout(timeout);
   }, [notification]);

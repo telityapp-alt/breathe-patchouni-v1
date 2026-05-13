@@ -311,7 +311,7 @@ export function AnalyticsPage() {
                </div>
                
                <p className="text-sm font-medium text-indigo-200 text-center mt-4">
-                  BHI adalah komposit klinis yang mengukur efektivitas intervensimu melintasi 5 pilar rehabilitasi perilaku.
+                  BHI is a clinical composite that measures the effectiveness of your interventions across 5 pillars of behavioral rehabilitation.
                </p>
             </section>
          )}
@@ -327,7 +327,7 @@ export function AnalyticsPage() {
                   {withdrawalWarning && (
                      <div className="mb-4 bg-brand-surface border border-brand/30 p-3 rounded-xl">
                         <h4 className="text-brand-dark font-bold text-xs mb-1">Clinical Warning: Withdrawal Intensification</h4>
-                        <p className="text-brand-dark text-sm font-medium">Frekuensi cravingmu menurun, namun intensitas rata-ratanya naik. Ini respons biologis wajar di fase ini. Pastikan PATCHWORK selalu siap.</p>
+                        <p className="text-brand-dark text-sm font-medium">Your craving frequency is decreasing, but the average intensity is rising. This is a normal biological response at this phase. Ensure PATCHWORK is always ready.</p>
                      </div>
                   )}
                   <div className="h-48">
@@ -489,11 +489,11 @@ export function AnalyticsPage() {
                <div className="card-duo">
                   <h3 className="text-sm font-bold text-gray-800 mb-2">Engagement Correlation</h3>
                   <p className="text-sm font-medium text-gray-600 leading-relaxed mb-4">
-                     Di minggu kamu aktif melakukan aktivitas metode (engagement score: {methodEngagementScore}), resistance rate kamu tercatat pada <strong>{resistanceWeekData[3].rate}%</strong>. Konsolidasi memori perilaku tampaknya sedang terjadi.
+                     In the week you actively performed method activities (engagement score: {methodEngagementScore}), your resistance rate was recorded at <strong>{resistanceWeekData[3].rate}%</strong>. Behavioral memory consolidation appears to be taking place.
                   </p>
                   {methodEngagementScore < 3 && (
                      <div className="bg-gray-50 border border-gray-200 p-3 rounded-lg text-xs font-medium text-gray-600 italic">
-                        Coba bereksperimen dengan metode lain (seperti Habit Replacement atau ACT) jika kamu merasa metode saat ini tidak mengurangi craving.
+                        Try experimenting with other methods (like Habit Replacement or ACT) if you feel the current method isn't reducing cravings.
                      </div>
                   )}
                </div>
@@ -509,7 +509,7 @@ export function AnalyticsPage() {
                   </h3>
                   {moodCorrelation.length >= 2 && (
                      <div className="mb-4 bg-brand-50 text-brand-800 p-3 rounded-xl text-sm font-medium italic">
-                        "Craving kamu rata-rata {(moodCorrelation[0].avg - moodCorrelation[moodCorrelation.length-1].avg).toFixed(1)} poin lebih tinggi saat kamu merasa '{moodCorrelation[0].mood}' dibanding saat kamu '{moodCorrelation[moodCorrelation.length-1].mood}'."
+                        "Your cravings are on average {(moodCorrelation[0].avg - moodCorrelation[moodCorrelation.length-1].avg).toFixed(1)} points higher when you feel '{moodCorrelation[0].mood}' compared to when you feel '{moodCorrelation[moodCorrelation.length-1].mood}'."
                      </div>
                   )}
                   <div className="space-y-3">
@@ -524,7 +524,7 @@ export function AnalyticsPage() {
 
                <div className="card-duo">
                   <h3 className="font-bold text-gray-800 mb-2 text-sm">Psychological Resilience Tracker</h3>
-                  <p className="text-xs font-medium text-gray-500 mb-4">Seberapa sering kamu menghadapi craving intensitas sangat tinggi (skor &gt; 7) dan berhasil tidak merokok.</p>
+                  <p className="text-xs font-medium text-gray-500 mb-4">How often you faced very high-intensity cravings (score &gt; 7) and successfully resisted smoking.</p>
                   
                   <div className="flex items-center gap-4">
                      <div className="w-16 h-16 rounded-full border-4 border-indigo-500 flex items-center justify-center">
@@ -618,7 +618,7 @@ export function AnalyticsPage() {
 
          <div className="mt-12 pt-4 border-t border-gray-200">
             <p className="text-[10px] text-gray-500 leading-relaxed text-justify">
-               Disclaimer: Data ini adalah data perilaku self-reported yang dikumpulkan secara longitudinal melalui intervensi digital Breathe AI by Patchouni dan Inhaler PATCHWORK. Skor BHI (Behavioral Health Index) dan NDI dikalkulasi berdasarkan metrik adaptasi dari instrumen klinis namun bukan merupakan diagnosis medis formal. Laporan ini intended untuk digunakan sebagai material diskusi antara pasien dan tenaga profesional kesehatan (Dokter/Konselor).
+               Disclaimer: This data is self-reported behavioral data collected longitudinally via the digital intervention of Breathe AI by Patchouni and the PATCHWORK Inhaler. The BHI (Behavioral Health Index) and NDI scores are calculated based on adapted metrics from clinical instruments, but this is not a formal medical diagnosis. This report is intended to be used as discussion material between the patient and a healthcare professional (Doctor/Counselor).
             </p>
          </div>
       </div>

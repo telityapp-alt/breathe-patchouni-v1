@@ -64,24 +64,24 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
       let actions = [];
       if (lastCravingMins < 60) {
          if (lastCraving?.outcome === 'smoked') {
-            actions = ["Gak papa, ajak ngobrol", "Bantu saya mulai lagi", "Kenapa ini terjadi?"];
+            actions = ["It's okay, let's talk", "Help me start over", "Why did this happen?"];
          } else if (lastCraving?.intensity >= 7) {
-            actions = ["Bantu saya lewatin craving ini", "Mau cerita dulu", `Lihat teknik ${state.profile?.quitMethod || 'relaksasi'}`];
+            actions = ["Help me get through this", "I want to vent", `Show me ${state.profile?.quitMethod || 'relaxation'} techniques`];
          } else {
-            actions = ["Cravingnya mereda sendiri", "Mau cerita pemicunya"];
+            actions = ["The craving faded on its own", "Let's talk about the trigger"];
          }
       } else if (currentDay > 0 && currentDay % 7 === 0) {
-         actions = ["Rayakan sama kamu", "Set target berikutnya", "Cek apa yang berubah di tubuh saya"];
+         actions = ["Celebrate with you", "Set the next goal", "Check what has changed in my body"];
       } else {
-         actions = ["Ada tips buat hari ini?", "Lagi kepikiran sesuatu", "Review progress saya"];
+         actions = ["Any tips for today?", "I have something on my mind", "Review my progress"];
       }
       return actions;
    }, [lastCravingMins, lastCraving, currentDay, state.profile]);
 
    const emotionRegex = {
-      distressed: /(gak kuat|nyerah|capek|pusing|stres|berat|gak bisa)/i,
-      ambivalent: /(ragu|gak yakin|mungkin|kayaknya|bingung)/i,
-      motivated: /(semangat|bisa|siap|mau coba|lanjut|yakin)/i
+      distressed: /(can't|give up|tired|dizzy|stressed|heavy|impossible)/i,
+      ambivalent: /(hesitant|unsure|maybe|guess|confused)/i,
+      motivated: /(excited|can do this|ready|want to try|keep going|sure)/i
    };
 
    const detectEmotion = (text: string) => {
@@ -246,7 +246,7 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
                      inhaler_used: false,
                      notes: args.notes || 'Logged via AI Coach'
                  });
-                 finalReply = `Aku sudah mencatat craving kamu (Intensitas: ${args.intensity}, Trigger: ${args.trigger_category}). Hebat kamu sudah jujur! Tetap semangat ya.`;
+                 finalReply = `I've logged your craving (Intensity: ${args.intensity}, Trigger: ${args.trigger_category}). Awesome job being honest! Keep it up.`;
               }
            } else if (call.name === 'log_inhaler_for_user') {
               const args = call.args as any;
@@ -261,7 +261,7 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
                      fallbackMethod: null,
                      notes: args.notes || 'Logged via AI Coach'
                  });
-                 finalReply = `Sip, aku sudah mencatat penggunaan inhaler kamu. Semoga craving-nya mereda ya!`;
+                 finalReply = `Got it, I've noted down your inhaler usage. Hope the craving subsides!`;
               }
            } else if (call.name === 'create_personal_mission') {
               const args = call.args as any;
@@ -297,7 +297,7 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
         await addChatMessage({
             role: 'ai',
             sessionId: 'default_session',
-            content: "Maaf, sistemku lagi ada gangguan koneksi sedikit. Terus bernapas perlahan, kamu pasti bisa lewatin ini.",
+            content: "Sorry, I am experiencing a slight connection issue right now. Keep breathing slowly, you can easily get through this.",
             timestamp: new Date().toISOString()
         });
       } finally {
@@ -430,7 +430,7 @@ function TrackerInterface() {
                <div className="bg-gray-100 border border-gray-200 rounded-3xl p-6 text-center shadow-sm">
                   <h4 className="font-bold text-gray-800 mb-2">Tidak ada misi aktif</h4>
                   <p className="text-sm font-medium text-gray-500">
-                     Chat dengan AI Coach untuk mendapatkan tantangan dan misi personal yang sesuai dengan progress kamu.
+                     Chat with your AI Coach to get personal challenges and missions tailored to your progress.
                   </p>
                </div>
             )}

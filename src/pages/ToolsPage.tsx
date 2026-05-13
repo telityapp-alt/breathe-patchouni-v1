@@ -24,14 +24,14 @@ function ToolsList({ setPage }: { setPage: (page: SubPage) => void }) {
     {
       id: 'calculator',
       title: 'Rokok Calculator',
-      description: 'Bakar Apa Hari Ini? Hitung cost riil dari rokokmu.',
+      description: 'What Did You Burn Today? Calculate the real cost of your cigarettes.',
       icon: Calculator,
       color: 'bg-brand-surface text-brand-dark border-brand/30'
     },
     {
       id: 'surfer',
       title: 'Craving Surfer',
-      description: 'Tahan 3 Menit, Menangkan Satu Ronde. Game pengalih craving.',
+      description: 'Hold For 3 Minutes, Win A Round. Craving distraction game.',
       icon: Waves,
       color: 'bg-cyan-50 text-cyan-600 border-cyan-200'
     },
@@ -47,7 +47,7 @@ function ToolsList({ setPage }: { setPage: (page: SubPage) => void }) {
   return (
     <div className="p-4 pt-12">
       <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Tools & Games</h1>
-      <p className="text-gray-500 font-medium mb-8">Pilih tes interaktif untuk membantumu stay on track.</p>
+      <p className="text-gray-500 font-medium mb-8">Choose an interactive test to help you stay on track.</p>
       
       <div className="flex flex-col gap-4">
         {tools.map(tool => (
@@ -100,14 +100,14 @@ function RokokCalculator({ setPage, setActiveTab }: { setPage: (p: SubPage) => v
         <button onClick={() => setPage('list')} className="p-2 -ml-2 rounded-xl text-gray-400 hover:bg-gray-50">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <span className="font-bold text-gray-900 ml-2">Bakar Apa Hari Ini?</span>
+        <span className="font-bold text-gray-900 ml-2">What Did You Burn Today?</span>
       </div>
 
       <div className="p-4 flex-1 flex flex-col gap-8 pb-32">
         {/* ZONA INPUT */}
         <div className="bg-white rounded-3xl p-3 space-y-6">
           <div>
-             <label className="block font-extrabold text-gray-900 mb-2">Batang per hari</label>
+             <label className="block font-extrabold text-gray-900 mb-2">Cigarettes per day</label>
              <div className="flex items-center gap-4">
                 <input 
                   type="range" 
@@ -135,19 +135,19 @@ function RokokCalculator({ setPage, setActiveTab }: { setPage: (p: SubPage) => v
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-red-50 rounded-3xl p-3 text-center border-2 border-red-100 flex flex-col justify-center">
-              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Cost Harian</span>
+              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Daily Cost</span>
               <span className="font-bold text-2xl text-red-600">Rp {(dailyCost/1000).toFixed(0)}k</span>
             </div>
             <div className="bg-red-50 rounded-3xl p-3 text-center border-2 border-red-100 flex flex-col justify-center">
-              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Cost Mingguan</span>
+              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Weekly Cost</span>
               <span className="font-bold text-2xl text-red-600">Rp {(dailyCost * 7 / 1000).toFixed(0)}k</span>
             </div>
             <div className="bg-red-50 rounded-3xl p-3 text-center border-2 border-red-100 flex flex-col justify-center">
-              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Cost Bulanan</span>
+              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Monthly Cost</span>
               <span className="font-bold text-2xl text-red-600">Rp {(dailyCost * 30 / 1000000).toFixed(2)}Jt</span>
             </div>
             <div className="bg-red-50 rounded-3xl p-3 text-center border-2 border-red-100 flex flex-col justify-center">
-              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Cost Tahunan</span>
+              <span className="text-xs font-bold text-red-500 tracking-wider mb-2">Yearly Cost</span>
               <span className="font-bold text-2xl text-red-600">Rp {(yearlyCost/1000000).toFixed(1)}Jt</span>
             </div>
           </div>
@@ -160,7 +160,7 @@ function RokokCalculator({ setPage, setActiveTab }: { setPage: (p: SubPage) => v
                <div>
                  <h4 className="font-extrabold text-gray-900 mb-1">Countdown ke Mimpimu</h4>
                  <p className="text-brand-dark text-sm font-medium leading-relaxed">
-                   Kalau kamu stop hari ini, dalam <strong className="font-bold text-lg bg-white px-2 py-0.5 rounded-lg mx-1 shadow-sm border border-brand/30">{daysToDream} hari</strong> kamu bisa beli Dream Item itu dari uang rokok yang ditabung.
+                   If you stop today, in <strong className="font-bold text-lg bg-white px-2 py-0.5 rounded-lg mx-1 shadow-sm border border-brand/30">{daysToDream} days</strong> you can buy that Dream Item with your saved money.
                  </p>
                </div>
              </div>
@@ -174,8 +174,8 @@ function RokokCalculator({ setPage, setActiveTab }: { setPage: (p: SubPage) => v
                <div>
                  <h4 className="font-extrabold text-white mb-1">Waktu Hidup Terbakar</h4>
                  <p className="text-gray-300 text-sm font-medium leading-relaxed">
-                   Hari ini kamu membakar <strong className="text-red-400">{lostLifeMinutes} menit</strong> hidupmu. 
-                   Sejak lu merokok ({baseYears} tahun), total <strong className="text-red-400">{totalLostLifeHours} jam</strong> yang hilang.
+                   Today you burned <strong className="text-red-400">{lostLifeMinutes} minutes</strong> of your life. 
+                   Since you started smoking ({baseYears} years ago), a total of <strong className="text-red-400">{totalLostLifeHours} hours</strong> have been lost.
                  </p>
                </div>
              </div>
@@ -189,7 +189,7 @@ function RokokCalculator({ setPage, setActiveTab }: { setPage: (p: SubPage) => v
                <div>
                  <h4 className="font-extrabold text-gray-900 mb-1">Konversi Relatable</h4>
                  <p className="text-green-800 text-sm font-medium leading-relaxed">
-                   Biaya rokok setahunmu = <strong>{relatableMeal} Porsi Makan Enak</strong>, <strong>{relatableGas} Liter Bensin</strong>, atau langganan <strong>Netflix Premium {relatableNetflix} Bulan</strong>.
+                   Your yearly cigarette cost = <strong>{relatableMeal} Good Meals</strong>, <strong>{relatableGas} Liters of Gas</strong>, or <strong>{relatableNetflix} Months of Netflix Premium</strong>.
                  </p>
                </div>
              </div>
@@ -271,7 +271,7 @@ function CravingSurfer({ setPage }: { setPage: (p: SubPage) => void }) {
         <Waves className="w-20 h-20 text-cyan-400 mb-6" strokeWidth={1.5} />
         <h2 className="text-3xl font-extrabold text-white mb-4">Craving Surfer</h2>
         <p className="text-cyan-100 font-medium text-lg leading-relaxed mb-12">
-          Craving itu seperti ombak. Dia naik ke puncak, lalu akan turun dengan sendirinya dalam 3 menit.
+          Cravings are like waves. They rise to a peak, then subside on their own within 3 minutes.
         </p>
         <button 
           onClick={startSurfing}
@@ -290,7 +290,7 @@ function CravingSurfer({ setPage }: { setPage: (p: SubPage) => void }) {
           <ThumbsUp className="w-16 h-16 text-green-600" />
         </div>
         <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Ombaknya Lewat.</h2>
-        <p className="text-gray-500 font-medium text-lg mb-12">Kamu berhasil melewati 3 menit. Gimana rasanya sekarang?</p>
+        <p className="text-gray-500 font-medium text-lg mb-12">You made it past 3 minutes. How do you feel now?</p>
         
         <div className="flex flex-col gap-4 w-full">
           <button 
@@ -521,7 +521,7 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
       <div className="flex flex-col h-full bg-white justify-center items-center text-center p-4">
          <Wind className="w-16 h-16 text-brand-light mb-6 animate-pulse" />
          <h2 className="text-2xl font-bold text-gray-900 mb-2 animate-pulse">Menghitung Lung Age...</h2>
-         <p className="text-gray-500 font-medium">Menganalisa profil nafasmu dari kriteria klinis.</p>
+         <p className="text-gray-500 font-medium">Analyzing your lung profile based on clinical criteria.</p>
       </div>
     )
   }
@@ -558,7 +558,7 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
            <div className="space-y-4">
              <div className="bg-white rounded-3xl p-3 text-center">
                <p className="text-gray-600 font-medium leading-relaxed">
-                 Ini bukan vonis, ini titik awal. Usia paru-parumu diperkirakan <strong>{diff} tahun lebih tua</strong> dari usiamu karena beban rokok harian dan gejala yang kamu rasakan.
+                 This is not a verdict, it's a starting point. Your estimated lung age is <strong>{diff} years older</strong> than your actual age due to your daily smoking burden and symptoms.
                </p>
              </div>
 
@@ -566,7 +566,7 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
                <div className="bg-brand/10 p-2 rounded-xl text-brand-dark"><Target className="w-5 h-5"/></div>
                <div>
                   <h4 className="font-extrabold text-brand-dark mb-1">Kabar Baiknya</h4>
-                  <p className="text-brand-dark text-sm font-medium leading-snug">Kalau kamu stop hari ini, dalam 1 tahun Lung Age kamu bisa turun ke estimasi <strong>{Math.round(answers.age + (diff*0.4))} tahun</strong>! Paru-paru bisa membersihkan diri sendiri.</p>
+                  <p className="text-brand-dark text-sm font-medium leading-snug">If you stop today, your Lung Age could improve to an estimated <strong>{Math.round(answers.age + (diff*0.4))} years</strong> within a year! Lungs can clean themselves.</p>
                </div>
              </div>
 
@@ -604,7 +604,7 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
             onClick={() => setActiveTab('settings')} 
             className="w-full pointer-events-auto bg-brand text-white font-extrabold text-lg py-4 rounded-2xl shadow-lg border-b-4 border-brand-dark active:translate-y-1 active:border-b-0 transition-all flex items-center justify-center gap-2"
           >
-            Lacak Pemulihanmu <ArrowRight className="w-5 h-5"/>
+            Track Your Recovery <ArrowRight className="w-5 h-5"/>
           </button>
         </div>
       </div>
@@ -613,8 +613,8 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
 
   const questions = [
     {
-      title: "Usia kamu saat ini?",
-      desc: "Umur biologi asli kamu.",
+      title: "Current age?",
+      desc: "Your actual biological age.",
       render: () => (
         <div className="text-center">
           <span className="text-6xl font-bold text-brand tabular-nums">{answers.age}</span>
@@ -623,8 +623,8 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
       )
     },
     {
-      title: "Sudah berapa tahun merokok?",
-      desc: "Hitung sejak kamu mulai rutin tiap hari.",
+      title: "How many years smoking?",
+      desc: "Count from when you started daily.",
       render: () => (
         <div className="text-center">
           <span className="text-6xl font-bold text-brand tabular-nums">{answers.yearsSmoking}</span>
@@ -633,8 +633,8 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
       )
     },
     {
-      title: "Rata-rata batang per hari?",
-      desc: "Jujur aja sama diri sendiri.",
+      title: "Average cigarettes per day?",
+      desc: "Be honest with yourself.",
       render: () => (
         <div className="text-center">
           <span className="text-6xl font-bold text-brand tabular-nums">{answers.cigsPerDay}</span>
@@ -643,33 +643,33 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
       )
     },
     {
-      title: "Sering batuk di pagi hari?",
-      desc: "Batuk yang muncul persis setelah bangun tidur.",
+      title: "Often cough in the morning?",
+      desc: "Coughing that appears right after waking up.",
       render: () => (
         <div className="flex flex-col gap-4">
-          <button onClick={() => { setAnswers({...answers, morningCough: true}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", answers.morningCough ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Ya, Sering</button>
-          <button onClick={() => { setAnswers({...answers, morningCough: false}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", !answers.morningCough ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Tidak</button>
+          <button onClick={() => { setAnswers({...answers, morningCough: true}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", answers.morningCough ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Yes, Often</button>
+          <button onClick={() => { setAnswers({...answers, morningCough: false}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", !answers.morningCough ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>No</button>
         </div>
       )
     },
     {
-      title: "Gampang ngos-ngosan?",
-      desc: "Dibandingkan orang seumuran pas naik tangga atau olahraga.",
+      title: "Get out of breath easily?",
+      desc: "Compared to people your age when climbing stairs or exercising.",
       render: () => (
         <div className="text-center">
           <span className="text-6xl font-bold text-brand tabular-nums">{answers.shortBreath}</span>
-          <p className="text-gray-400 mt-2">{answers.shortBreath === 1 ? 'Sangat Bugar' : answers.shortBreath === 5 ? 'Cepat Sekali Ngos-ngosan' : 'Standar aja'}</p>
+          <p className="text-gray-400 mt-2">{answers.shortBreath === 1 ? 'Very Fit' : answers.shortBreath === 5 ? 'Very Quickly Out of Breath' : 'Standard'}</p>
           <input type="range" min="1" max="5" value={answers.shortBreath} onChange={e => setAnswers({...answers, shortBreath: Number(e.target.value)})} className="w-full mt-8 accent-orange-500 h-2 bg-gray-200 rounded-full appearance-none"/>
         </div>
       )
     },
     {
-      title: "Pernah ada diagnosis masalah pernafasan?",
-      desc: "Seperti asma, bronkitis ringan, dll.",
+      title: "Any previous respiratory diagnosis?",
+      desc: "Such as asthma, mild bronchitis, etc.",
       render: () => (
         <div className="flex flex-col gap-4">
-          <button onClick={() => { setAnswers({...answers, respHistory: true}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", answers.respHistory ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Pernah</button>
-          <button onClick={() => { setAnswers({...answers, respHistory: false}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", !answers.respHistory ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Belum Pernah</button>
+          <button onClick={() => { setAnswers({...answers, respHistory: true}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", answers.respHistory ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Yes</button>
+          <button onClick={() => { setAnswers({...answers, respHistory: false}); handleNext(); }} className={cn("py-4 rounded-2xl font-bold text-lg border-2", !answers.respHistory ? "bg-brand-surface border-brand text-brand-dark" : "bg-white border-gray-200 text-gray-700")}>Never</button>
         </div>
       )
     }
@@ -681,7 +681,7 @@ function LungAgeTest({ setPage, setActiveTab }: { setPage: (p: SubPage) => void,
         <button onClick={() => setPage('list')} className="p-2 -ml-2 rounded-xl text-gray-400 hover:bg-gray-50">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <span className="font-bold text-gray-900">Pertanyaan {step + 1}/6</span>
+        <span className="font-bold text-gray-900">Question {step + 1}/6</span>
         <div className="w-10"></div>
       </div>
       
