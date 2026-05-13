@@ -7,8 +7,33 @@ export function useBluetoothInhaler() {
   const [notification, setNotification] = useState<{ show: boolean, time: number }>({ show: false, time: 0 });
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Prevent triggering if user is actively typing in an input
+    // 1. Setup Silent Audio explicitly to capture Mobile Volume buttons
+    let audio: HTMLAudioElement | null = null;
+    
+    const setupAudio = () => {
+       if (!audio) {
+          // A tiny 1-second silent WAV base64
+          const silentWav = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+          audio = new Audio(silentWav);
+          audio.loop = true;
+          audio.play().catch(() => {}); // Catch autoplay errors
+       }
+    };
+    
+    // Start audio on first user interaction to satisfy browser autoplay policies
+    const triggerAudio = () => {
+       setupAudio();
+       window.removeEventListener('click', triggerAudio, { capture: true });
+       window.removeEventListener('touchstart', triggerAudio, { capture: true });
+       window.removeEventListener('keydown', triggerAudio, { capture: true });
+    };
+    
+    window.addEventListener('click', triggerAudio, { capture: true });
+    window.addEventListener('touchstart', triggerAudio, { capture: true });
+    window.addEventListener('keydown', triggerAudio, { capture: true });
+
+
+    const handleKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
         return;
@@ -34,7 +59,14 @@ export function useBluetoothInhaler() {
       ].includes(key);
 
       if (isTriggerKey) {
-        try { e.preventDefault(); } catch(err) {}
+        // PREVENT default immediately to stop buttons from being clicked
+        try { 
+           e.preventDefault(); 
+           e.stopPropagation();
+        } catch(err) {}
+
+        // Only log on keydown to prevent double triggering with keyup
+        if (e.type !== 'keydown') return;
 
         const now = Date.now();
         // Debounce 2 seconds
@@ -49,14 +81,14 @@ export function useBluetoothInhaler() {
             intensityAfter: 5,
             isInhalerAvailable: true,
             fallbackMethod: null,
-            notes: 'Automatic everything bypass logged via Bluetooth Clicker.'
+            notes: 'Automatic everything bypass logged via Bluetooth Clicker / Volume.'
           }).then(() => {
              console.log('Bluetooth Inhaler trigger detected! Logged successfully.');
              setNotification({ show: true, time: now });
           }).catch(console.error);
 
           if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-            try { navigator.vibrate([100, 50, 100]); } catch(e){}
+             try { navigator.vibrate([100, 50, 100]); } catch(e){}
           }
         }
       }
@@ -64,11 +96,13 @@ export function useBluetoothInhaler() {
 
     const triggerFromMediaSession = () => {
       // Simulate fake keydown
-      handleKeyDown({ key: 'VolumeUp', preventDefault: () => {}, target: document.body } as any);
+      handleKey({ type: 'keydown', key: 'VolumeUp', preventDefault: () => {}, stopPropagation: () => {}, target: document.body } as any);
     };
 
-    // 1. Keyboard Events
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    // 1. Keyboard Events (Capture phase for all to suppress UI clicks)
+    window.addEventListener('keydown', handleKey, { capture: true });
+    window.addEventListener('keyup', handleKey, { capture: true });
+    window.addEventListener('keypress', handleKey, { capture: true });
     
     // 2. Media Session Fallback (if clicker acts as media controller)
     if ('mediaSession' in navigator) {
@@ -81,7 +115,16 @@ export function useBluetoothInhaler() {
     }
 
     return () => {
-       window.removeEventListener('keydown', handleKeyDown, { capture: true });
+       window.removeEventListener('keydown', handleKey, { capture: true });
+       window.removeEventListener('keyup', handleKey, { capture: true });
+       window.removeEventListener('keypress', handleKey, { capture: true });
+       window.removeEventListener('click', triggerAudio, { capture: true });
+       window.removeEventListener('touchstart', triggerAudio, { capture: true });
+       window.removeEventListener('keydown', triggerAudio, { capture: true });
+       if (audio) {
+          audio.pause();
+          audio = null;
+       }
        if ('mediaSession' in navigator) {
           try {
              navigator.mediaSession.setActionHandler('play', null);
