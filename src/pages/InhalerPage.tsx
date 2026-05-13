@@ -35,6 +35,12 @@ const VARIANTS = [
     desc: "focus & break",
     color: "bg-brand",
   },
+  {
+    id: "automatic-bypass",
+    name: "Auto Bypass",
+    desc: "Bluetooth logger",
+    color: "bg-indigo-500",
+  },
 ] as const;
 
 const CONTEXTS = [

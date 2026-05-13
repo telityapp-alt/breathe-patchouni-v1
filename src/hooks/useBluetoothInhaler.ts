@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../store/AppContext';
 
-/**
- * Hook to intercept volume button presses (often sent by Bluetooth shutters/clickers)
- * and automatically log an inhaler usage.
- */
 export function useBluetoothInhaler() {
   const { addInhalerLog } = useAppContext();
   const lastLogTime = useRef<number>(0);
@@ -17,53 +13,84 @@ export function useBluetoothInhaler() {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
         return;
       }
-
+      
       const key = e.key?.toLowerCase();
-      // Most bluetooth shutters send VolumeUp/AudioVolumeUp
-      const isVolumeKey = [
+      // Broad support for triggers: volume buttons, media buttons, arrows, enter, space, plus, minus
+      const isTriggerKey = [
         'audiovolumeup',
         'audiovolumedown',
         'volumeup',
         'volumedown',
         'mediatracknext',
-        'mediaplaypause'
+        'mediatrackprevious',
+        'mediaplaypause',
+        'arrowup',
+        'arrowdown',
+        'enter',
+        ' ',
+        '+',
+        '=',
+        '-'
       ].includes(key);
 
-      if (isVolumeKey) {
-        // Try/catch just in case.
-        try {
-           // Do not universally preventDefault on volume keys, some OS might hate it, but try for web
-        } catch(err){}
+      if (isTriggerKey) {
+        try { e.preventDefault(); } catch(err) {}
 
         const now = Date.now();
-        // Debounce to prevent double-logging if device stutters or sends multiple events
+        // Debounce 2 seconds
         if (now - lastLogTime.current > 2000) { 
           lastLogTime.current = now;
           
-          // Automatic everything bypass
           addInhalerLog({
             timestamp: new Date().toISOString(),
-            variantUsed: 'automatic_bypass',
-            cravingContexts: ['Automatic'],
+            variantUsed: 'automatic-bypass',
+            context: ['Automatic Trigger'],
             intensityBefore: 5,
             intensityAfter: 5,
-            notes: 'Automatic everything bypass.'
-          });
-          
-          console.log('Bluetooth Inhaler trigger detected! Automatic everything bypass.');
-          
-          setNotification({ show: true, time: now });
+            isInhalerAvailable: true,
+            fallbackMethod: null,
+            notes: 'Automatic everything bypass logged via Bluetooth Clicker.'
+          }).then(() => {
+             console.log('Bluetooth Inhaler trigger detected! Logged successfully.');
+             setNotification({ show: true, time: now });
+          }).catch(console.error);
 
-          // Provide haptic feedback if the device supports it
-          if ('vibrate' in navigator) {
-            navigator.vibrate([100, 50, 100]); // Two quick buzzes
+          if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+            try { navigator.vibrate([100, 50, 100]); } catch(e){}
           }
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    const triggerFromMediaSession = () => {
+      // Simulate fake keydown
+      handleKeyDown({ key: 'VolumeUp', preventDefault: () => {}, target: document.body } as any);
+    };
+
+    // 1. Keyboard Events
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    
+    // 2. Media Session Fallback (if clicker acts as media controller)
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.setActionHandler('play', triggerFromMediaSession);
+        navigator.mediaSession.setActionHandler('pause', triggerFromMediaSession);
+        navigator.mediaSession.setActionHandler('nexttrack', triggerFromMediaSession);
+        navigator.mediaSession.setActionHandler('previoustrack', triggerFromMediaSession);
+      } catch(e) {}
+    }
+
+    return () => {
+       window.removeEventListener('keydown', handleKeyDown, { capture: true });
+       if ('mediaSession' in navigator) {
+          try {
+             navigator.mediaSession.setActionHandler('play', null);
+             navigator.mediaSession.setActionHandler('pause', null);
+             navigator.mediaSession.setActionHandler('nexttrack', null);
+             navigator.mediaSession.setActionHandler('previoustrack', null);
+          } catch(e) {}
+       }
+    };
   }, [addInhalerLog]);
 
   useEffect(() => {
@@ -71,7 +98,7 @@ export function useBluetoothInhaler() {
     if (notification.show) {
       timeout = setTimeout(() => {
         setNotification(prev => ({ ...prev, show: false }));
-      }, 3500); // hide after 3.5 seconds
+      }, 4000); // hide after 4 seconds
     }
     return () => clearTimeout(timeout);
   }, [notification]);

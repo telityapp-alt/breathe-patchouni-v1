@@ -90,7 +90,7 @@ export interface HabitLog {
 export interface InhalerLog {
   id?: string;
   timestamp: string;
-  variantUsed: 'warm-bitter' | 'cool-mint' | 'spicy-herbal' | 'none';
+  variantUsed: 'warm-bitter' | 'cool-mint' | 'spicy-herbal' | 'none' | 'automatic-bypass';
   context: string[];
   intensityBefore: number;
   intensityAfter: number | null;
