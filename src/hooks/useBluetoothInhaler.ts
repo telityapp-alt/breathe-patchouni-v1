@@ -57,6 +57,13 @@ export function useBluetoothInhaler() {
 
   useEffect(() => {
     const handleFirstInteraction = async (e: Event) => {
+      console.log('[BT Inhaler] Event type:', e.type, '| isTrusted:', e.isTrusted);
+      
+      if (!e.isTrusted) {
+        console.warn('[BT Inhaler] FAKE gesture detected! Skipping.');
+        return;
+      }
+
       if (isInitialized.current) return;
       isInitialized.current = true;
 
@@ -70,9 +77,10 @@ export function useBluetoothInhaler() {
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
         const ctx = new AudioCtx();
 
+        console.log('[BT Inhaler] AudioContext state before resume:', ctx.state);
         // Resume explicitly — wajib di Chrome mobile
         await ctx.resume();
-        console.log('[BT Inhaler] AudioContext state:', ctx.state);
+        console.log('[BT Inhaler] AudioContext state after resume:', ctx.state);
 
         const buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
         const channelData = buffer.getChannelData(0);
