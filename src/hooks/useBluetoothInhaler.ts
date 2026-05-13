@@ -3,145 +3,128 @@ import { useAppContext } from '../store/AppContext';
 
 export function useBluetoothInhaler() {
   const { addInhalerLog } = useAppContext();
-  const lastLogTime = useRef<number>(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const debounceRef = useRef<number | null>(null);
+  const isInitialized = useRef(false);
   const [notification, setNotification] = useState<{ show: boolean, time: number }>({ show: false, time: 0 });
 
-  useEffect(() => {
-    // 1. Setup Silent Audio explicitly to capture Mobile Volume buttons
-    let audio: HTMLAudioElement | null = null;
+  const triggerLog = () => {
+    if (debounceRef.current) return;
     
-    const setupAudio = () => {
-       if (!audio) {
-          // A tiny 1-second silent WAV base64
-          const silentWav = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-          audio = new Audio(silentWav);
-          audio.loop = true;
-          audio.play().catch(() => {}); // Catch autoplay errors
-       }
-    };
-    
-    // Start audio on first user interaction to satisfy browser autoplay policies
-    const triggerAudio = () => {
-       setupAudio();
-       window.removeEventListener('click', triggerAudio, { capture: true });
-       window.removeEventListener('touchstart', triggerAudio, { capture: true });
-       window.removeEventListener('keydown', triggerAudio, { capture: true });
-    };
-    
-    window.addEventListener('click', triggerAudio, { capture: true });
-    window.addEventListener('touchstart', triggerAudio, { capture: true });
-    window.addEventListener('keydown', triggerAudio, { capture: true });
+    const now = Date.now();
+    addInhalerLog({
+      timestamp: new Date().toISOString(),
+      variantUsed: 'automatic-bypass',
+      context: ['Automatic Trigger'],
+      intensityBefore: 5,
+      intensityAfter: 5,
+      isInhalerAvailable: true,
+      fallbackMethod: null,
+      notes: 'Automatic everything bypass logged via Bluetooth Clicker / Volume.'
+    }).then(() => {
+      console.log('Bluetooth Inhaler trigger detected! Logged successfully.');
+      setNotification({ show: true, time: now });
+    }).catch(console.error);
 
-
-    const handleKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
-        return;
-      }
-      
-      const key = e.key?.toLowerCase();
-      // Broad support for triggers: volume buttons, media buttons, arrows, enter, space, plus, minus
-      const isTriggerKey = [
-        'audiovolumeup',
-        'audiovolumedown',
-        'volumeup',
-        'volumedown',
-        'mediatracknext',
-        'mediatrackprevious',
-        'mediaplaypause',
-        'arrowup',
-        'arrowdown',
-        'enter',
-        ' ',
-        '+',
-        '=',
-        '-'
-      ].includes(key);
-
-      if (isTriggerKey) {
-        // PREVENT default immediately to stop buttons from being clicked
-        try { 
-           e.preventDefault(); 
-           e.stopPropagation();
-        } catch(err) {}
-
-        // Only log on keydown to prevent double triggering with keyup
-        if (e.type !== 'keydown') return;
-
-        const now = Date.now();
-        // Debounce 2 seconds
-        if (now - lastLogTime.current > 2000) { 
-          lastLogTime.current = now;
-          
-          addInhalerLog({
-            timestamp: new Date().toISOString(),
-            variantUsed: 'automatic-bypass',
-            context: ['Automatic Trigger'],
-            intensityBefore: 5,
-            intensityAfter: 5,
-            isInhalerAvailable: true,
-            fallbackMethod: null,
-            notes: 'Automatic everything bypass logged via Bluetooth Clicker / Volume.'
-          }).then(() => {
-             console.log('Bluetooth Inhaler trigger detected! Logged successfully.');
-             setNotification({ show: true, time: now });
-          }).catch(console.error);
-
-          if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-             try { navigator.vibrate([100, 50, 100]); } catch(e){}
-          }
-        }
-      }
-    };
-
-    const triggerFromMediaSession = () => {
-      // Simulate fake keydown
-      handleKey({ type: 'keydown', key: 'VolumeUp', preventDefault: () => {}, stopPropagation: () => {}, target: document.body } as any);
-    };
-
-    // 1. Keyboard Events (Capture phase for all to suppress UI clicks)
-    window.addEventListener('keydown', handleKey, { capture: true });
-    window.addEventListener('keyup', handleKey, { capture: true });
-    window.addEventListener('keypress', handleKey, { capture: true });
-    
-    // 2. Media Session Fallback (if clicker acts as media controller)
-    if ('mediaSession' in navigator) {
-      try {
-        navigator.mediaSession.setActionHandler('play', triggerFromMediaSession);
-        navigator.mediaSession.setActionHandler('pause', triggerFromMediaSession);
-        navigator.mediaSession.setActionHandler('nexttrack', triggerFromMediaSession);
-        navigator.mediaSession.setActionHandler('previoustrack', triggerFromMediaSession);
-      } catch(e) {}
+    if (typeof window !== 'undefined' && navigator.vibrate) {
+      try { navigator.vibrate([100, 50, 100]); } catch(e){}
     }
 
-    return () => {
-       window.removeEventListener('keydown', handleKey, { capture: true });
-       window.removeEventListener('keyup', handleKey, { capture: true });
-       window.removeEventListener('keypress', handleKey, { capture: true });
-       window.removeEventListener('click', triggerAudio, { capture: true });
-       window.removeEventListener('touchstart', triggerAudio, { capture: true });
-       window.removeEventListener('keydown', triggerAudio, { capture: true });
-       if (audio) {
-          audio.pause();
-          audio = null;
-       }
-       if ('mediaSession' in navigator) {
-          try {
-             navigator.mediaSession.setActionHandler('play', null);
-             navigator.mediaSession.setActionHandler('pause', null);
-             navigator.mediaSession.setActionHandler('nexttrack', null);
-             navigator.mediaSession.setActionHandler('previoustrack', null);
-          } catch(e) {}
-       }
+    debounceRef.current = window.setTimeout(() => {
+      debounceRef.current = null;
+    }, 2000);
+  };
+
+  const initAudioAndMediaSession = () => {
+    if (isInitialized.current) return;
+    isInitialized.current = true;
+
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContext();
+      
+      const buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.001; 
+      }
+
+      const mediaSource = ctx.createMediaStreamDestination();
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      source.connect(mediaSource);
+      source.start();
+
+      const audio = new Audio();
+      audio.srcObject = mediaSource.stream;
+      audio.volume = 0.001; 
+      audio.loop = true;
+      audio.play().then(() => {
+        audioRef.current = audio;
+        setupMediaSession();
+      }).catch(console.error);
+    } catch (e) {
+      console.error('Audio setup failed:', e);
+    }
+  };
+
+  const setupMediaSession = () => {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: 'Breathe AI Active',
+      artist: 'Inhaler Tracker',
+    });
+    navigator.mediaSession.playbackState = 'playing';
+
+    try {
+      navigator.mediaSession.setActionHandler('previoustrack', triggerLog);
+      navigator.mediaSession.setActionHandler('nexttrack', triggerLog);
+      navigator.mediaSession.setActionHandler('pause', triggerLog);
+      navigator.mediaSession.setActionHandler('play', triggerLog);
+    } catch (e) {
+      console.warn('MediaSession action not supported:', e);
+    }
+  };
+
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      initAudioAndMediaSession();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
     };
-  }, [addInhalerLog]);
+
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('touchstart', handleFirstInteraction);
+    document.addEventListener('keydown', handleFirstInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if ('mediaSession' in navigator) {
+        try {
+          navigator.mediaSession.setActionHandler('previoustrack', null);
+          navigator.mediaSession.setActionHandler('nexttrack', null);
+          navigator.mediaSession.setActionHandler('pause', null);
+          navigator.mediaSession.setActionHandler('play', null);
+        } catch(e) {}
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (notification.show) {
       timeout = setTimeout(() => {
         setNotification(prev => ({ ...prev, show: false }));
-      }, 4000); // hide after 4 seconds
+      }, 4000);
     }
     return () => clearTimeout(timeout);
   }, [notification]);
