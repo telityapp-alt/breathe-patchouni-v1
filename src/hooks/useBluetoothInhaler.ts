@@ -4,9 +4,10 @@ import { useAppContext } from '../store/AppContext';
 export function useBluetoothInhaler() {
   const { addInhalerLog } = useAppContext();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
   const debounceRef = useRef<number | null>(null);
   const isInitialized = useRef(false);
-  const addInhalerLogRef = useRef(addInhalerLog); // <-- KEY FIX
+  const addInhalerLogRef = useRef(addInhalerLog);
   const [notification, setNotification] = useState<{ show: boolean; time: number }>({
     show: false,
     time: 0,
@@ -56,32 +57,38 @@ export function useBluetoothInhaler() {
   }, [triggerLog]);
 
   useEffect(() => {
-    const handleFirstInteraction = async (e: Event) => {
-      console.log('[BT Inhaler] Event type:', e.type, '| isTrusted:', e.isTrusted);
-      
-      if (!e.isTrusted) {
-        console.warn('[BT Inhaler] FAKE gesture detected! Skipping.');
+    // STEP 1: Pre-create AudioContext IMMEDIATELY on mount (suspended state — OK)
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      audioCtxRef.current = new AudioCtx();
+      console.log('[BT Inhaler] AudioContext pre-created, state:', audioCtxRef.current.state);
+    } catch (e) {
+      console.error('[BT Inhaler] Cannot create AudioContext:', e);
+    }
+
+    // STEP 2: Unlock pattern
+    const unlock = async (e: Event) => {
+      if (isInitialized.current) return;
+
+      const ctx = audioCtxRef.current;
+      if (!ctx) return;
+
+      console.log('[BT Inhaler] Unlock attempt, ctx state:', ctx.state);
+
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+
+      console.log('[BT Inhaler] ctx state after resume:', ctx.state);
+
+      if (ctx.state !== 'running') {
+        console.warn('[BT Inhaler] ctx still not running, will retry next gesture.');
         return;
       }
 
-      if (isInitialized.current) return;
       isInitialized.current = true;
 
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
-
-      console.log('[BT Inhaler] First interaction detected, initializing audio...');
-
       try {
-        // KUNCI: AudioContext dibuat SYNCHRONOUS di sini, dalam callstack gesture yang sama
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        const ctx = new AudioCtx();
-
-        console.log('[BT Inhaler] AudioContext state before resume:', ctx.state);
-        // Resume explicitly — wajib di Chrome mobile
-        await ctx.resume();
-        console.log('[BT Inhaler] AudioContext state after resume:', ctx.state);
-
         const buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
         const channelData = buffer.getChannelData(0);
         for (let i = 0; i < channelData.length; i++) {
@@ -100,15 +107,11 @@ export function useBluetoothInhaler() {
         audio.volume = 0.001;
         audio.loop = true;
 
-        // play() dipanggil masih dalam async function yang triggered by gesture
         await audio.play();
         audioRef.current = audio;
-        console.log('[BT Inhaler] Audio playing, setting up MediaSession...');
+        console.log('[BT Inhaler] Audio playing.');
 
-        if (!('mediaSession' in navigator)) {
-          console.warn('[BT Inhaler] MediaSession not supported.');
-          return;
-        }
+        if (!('mediaSession' in navigator)) return;
 
         navigator.mediaSession.metadata = new MediaMetadata({
           title: 'Breathe AI Active',
@@ -118,28 +121,35 @@ export function useBluetoothInhaler() {
 
         const handler = () => triggerLogRef.current();
 
-        try { navigator.mediaSession.setActionHandler('previoustrack', handler); } catch (e) {}
-        try { navigator.mediaSession.setActionHandler('nexttrack', handler); } catch (e) {}
-        try { navigator.mediaSession.setActionHandler('pause', handler); } catch (e) {}
-        try { navigator.mediaSession.setActionHandler('play', handler); } catch (e) {}
+        try { navigator.mediaSession.setActionHandler('previoustrack', handler); } catch (_) {}
+        try { navigator.mediaSession.setActionHandler('nexttrack', handler); } catch (_) {}
+        try { navigator.mediaSession.setActionHandler('pause', handler); } catch (_) {}
+        try { navigator.mediaSession.setActionHandler('play', handler); } catch (_) {}
 
-        console.log('[BT Inhaler] MediaSession handlers registered.');
+        console.log('[BT Inhaler] MediaSession handlers registered. Ready.');
 
-      } catch (e) {
-        console.error('[BT Inhaler] Setup failed:', e);
-        // Reset flag biar bisa retry di interaction berikutnya
+        document.body.removeEventListener('touchstart', unlock);
+        document.body.removeEventListener('mousedown', unlock);
+        document.body.removeEventListener('keydown', unlock);
+
+      } catch (err) {
+        console.error('[BT Inhaler] Setup failed:', err);
         isInitialized.current = false;
       }
     };
 
-    document.addEventListener('click', handleFirstInteraction);
-    document.addEventListener('touchstart', handleFirstInteraction);
+    document.body.addEventListener('touchstart', unlock, false);
+    document.body.addEventListener('mousedown', unlock, false);
+    document.body.addEventListener('keydown', unlock, false);
 
     return () => {
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
+      document.body.removeEventListener('touchstart', unlock);
+      document.body.removeEventListener('mousedown', unlock);
+      document.body.removeEventListener('keydown', unlock);
       audioRef.current?.pause();
       audioRef.current = null;
+      audioCtxRef.current?.close();
+      audioCtxRef.current = null;
       if ('mediaSession' in navigator) {
         try { navigator.mediaSession.setActionHandler('previoustrack', null); } catch (e) {}
         try { navigator.mediaSession.setActionHandler('nexttrack', null); } catch (e) {}
