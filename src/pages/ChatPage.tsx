@@ -41,7 +41,7 @@ export function ChatPage({ setActiveTab }: { setActiveTab?: (tab: any) => void }
 }
 
 function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) {
-   const { state, addChatMessage, addCraving, addInhalerLog } = useAppContext();
+   const { state, addChatMessage, addCraving, addInhalerLog, addMission } = useAppContext();
    const [input, setInput] = useState('');
    const [isTyping, setIsTyping] = useState(false);
    const messagesEndRef = useRef<HTMLDivElement>(null);
