@@ -8,9 +8,11 @@ import {
   Settings,
   Target,
   Map as MapIcon,
-  ShoppingCart
+  ShoppingCart,
+  Zap
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { useAppContext } from "../store/AppContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,6 +21,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
+  const { addInhalerLog } = useAppContext();
   const navItems = [
     { id: "home", icon: Home, label: "Home" },
     { id: "method", icon: MapIcon, label: "My Plan" },
@@ -96,6 +99,35 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
                 </h4>
                 <p className="text-sm text-blue-500 font-bold tracking-wide">
                   Record your inhaler session
+                </p>
+              </div>
+            </button>
+
+            <button
+              className="card-duo flex items-center gap-3 p-3 text-left border-amber-200 bg-amber-50 shadow-[0_4px_0_var(--color-amber-200)] hover:bg-amber-100 active:translate-y-1 active:shadow-none transition-all"
+              onClick={async () => {
+                await addInhalerLog({
+                  timestamp: new Date().toISOString(),
+                  variantUsed: 'automatic-bypass',
+                  context: ['quick-auto-log'],
+                  intensityBefore: 5,
+                  intensityAfter: 0,
+                  isInhalerAvailable: true,
+                  fallbackMethod: null,
+                  notes: 'Auto-logged via quick action'
+                });
+                setShowLogOptions(false);
+              }}
+            >
+              <div className="w-10 h-10 rounded-xl bg-amber-500 font-bold flex items-center justify-center shrink-0 border-2 border-amber-600 shadow-[0_2px_0_var(--color-amber-600)]">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h4 className="font-bold text-md text-amber-900 leading-tight">
+                  Quick Auto-Log Inhaler
+                </h4>
+                <p className="text-[10px] text-amber-600 font-bold tracking-wide">
+                  1-Click instant log
                 </p>
               </div>
             </button>

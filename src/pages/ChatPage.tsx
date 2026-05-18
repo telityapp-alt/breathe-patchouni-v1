@@ -210,6 +210,7 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
                      currentCount: 0,
                      status: 'active',
                      startDate: new Date().toISOString(),
+                     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                      relatedMethod: args.relatedMethod
                  });
                  finalReply = `Sip, misi baru buatmu: "${args.title}" udah aku set. Cek tab Tracker ya!`;

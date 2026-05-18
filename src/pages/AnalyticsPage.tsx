@@ -185,7 +185,7 @@ export function AnalyticsPage() {
     if (currentMethod === 'cbt') count = state.cbtJournals?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
     if (currentMethod === 'act') count = state.actUrges?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
     if (currentMethod === 'mindfulness') count = state.mindfulnessLogs?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
-    if (currentMethod === 'mi') count = state.miReductionLogs?.filter(x => new Date(x.date || x.timestamp) >= weekAgo).length || 0;
+    if (currentMethod === 'mi') count = state.miReductionLogs?.filter(x => new Date(x.date) >= weekAgo).length || 0;
     if (currentMethod === 'habit') count = state.habitLogs?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
     return count;
   }, [state, currentMethod]);
