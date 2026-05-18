@@ -203,24 +203,29 @@ export default function InhalerPage({ startLogging, setActiveTab }: { startLoggi
       ctx.push(customContext);
     }
 
-    await addInhalerLog({
-      timestamp: new Date().toISOString(),
-      variantUsed: inhalerAvailable ? (variant as any) : "none",
-      context: ctx,
-      intensityBefore,
-      intensityAfter: intensityAfter,
-      isInhalerAvailable: inhalerAvailable,
-      fallbackMethod: inhalerAvailable ? null : "Sensory Override",
-    });
-    setShowLogModal(false);
+    try {
+      await addInhalerLog({
+        timestamp: new Date().toISOString(),
+        variantUsed: inhalerAvailable ? (variant as any) : "none",
+        context: ctx,
+        intensityBefore,
+        intensityAfter: intensityAfter,
+        isInhalerAvailable: inhalerAvailable,
+        fallbackMethod: inhalerAvailable ? null : "Sensory Override",
+      });
+      setShowLogModal(false);
 
-    // Reset form
-    setVariant("");
-    setSelectedContexts([]);
-    setCustomContext("");
-    setIntensityBefore(5);
-    setIntensityAfter(null);
-    setInhalerAvailable(true);
+      // Reset form
+      setVariant("");
+      setSelectedContexts([]);
+      setCustomContext("");
+      setIntensityBefore(5);
+      setIntensityAfter(null);
+      setInhalerAvailable(true);
+    } catch (err) {
+      console.error("Failed to save inhaler log:", err);
+      alert("Failed to save log. Please try again.");
+    }
   };
 
   const [expandedLog, setExpandedLog] = useState<string | null>(null);

@@ -232,12 +232,16 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
         await addChatMessage(aiMessage);
       } catch (error) {
         console.error(error);
-        await addChatMessage({
-            role: 'ai',
-            sessionId: 'default_session',
-            content: "Sorry, I am experiencing a slight connection issue right now. Keep breathing slowly, you can easily get through this.",
-            timestamp: new Date().toISOString()
-        });
+        try {
+          await addChatMessage({
+              role: 'ai',
+              sessionId: 'default_session',
+              content: "Sorry, I am experiencing a slight connection issue right now. Keep breathing slowly, you can easily get through this.",
+              timestamp: new Date().toISOString()
+          });
+        } catch (innerError) {
+          console.error("Failed to add connection issue message:", innerError);
+        }
       } finally {
         setIsTyping(false);
       }

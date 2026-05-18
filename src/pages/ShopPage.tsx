@@ -7,7 +7,7 @@ const PRODUCTS = [
   {
     id: "device-starter",
     name: "Breathe AI Smart Inhaler by Patchouni - Starter Kit",
-    price: 60000,
+    price: 120000,
     description: "The complete setup. A smart connected device that tracks your usage, plus 3 curated pods for cravings.",
     educational: "Nicotine Replacement Therapy (NRT) is effective, but often lacks the behavioral component. Breathe AI by Patchouni pairs physical sensation with cognitive tracking.",
     features: ["Bluetooth Sync", "Haptic Feedback", "Includes 3 Pods (Cool Mint, Warm Bitter, Spicy Herbal)"],
@@ -18,7 +18,7 @@ const PRODUCTS = [
   {
     id: "pod-mint",
     name: "Cool-Mint Flavor Pod (3-Pack)",
-    price: 60000,
+    price: 45000,
     description: "Best for stress and fatigue. Gives a sharp, cold hit that overrides the amygdala's panic response.",
     educational: "Cold sensations simulate deep breathing and reset the vagus nerve, instantly lowering heart rate during a craving.",
     features: ["Zero Nicotine", "Medical Grade Silicone", "Lasts ~300 puffs"],
@@ -29,7 +29,7 @@ const PRODUCTS = [
   {
     id: "pod-warm",
     name: "Warm-Bitter Flavor Pod (3-Pack)",
-    price: 60000,
+    price: 45000,
     description: "Perfect replacement for the post-meal craving. Simulates the harshness of a real cigarette without the toxins.",
     educational: "Bitter taste receptors in the throat suppress the urge to inhale deeply, satisfying the 'throat hit' craving commonly missed by quitters.",
     features: ["Zero Nicotine", "Throat Hit Focus", "Lasts ~300 puffs"],
@@ -40,7 +40,7 @@ const PRODUCTS = [
   {
     id: "pod-spicy",
     name: "Spicy-Herbal Flavor Pod (3-Pack)",
-    price: 60000,
+    price: 45000,
     description: "Ideal for focus and breaks. A stimulating blend that wakes up the senses.",
     educational: "Spicy sensations release endorphins (the body's natural painkillers), providing a healthier neuro-reward than dopamine from nicotine.",
     features: ["Zero Nicotine", "Endorphin Trigger", "Lasts ~300 puffs"],
@@ -54,6 +54,7 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
   const [cart, setCart] = useState<{id: string, qty: number}[]>([]);
   const [view, setView] = useState<'list' | 'detail' | 'cart'>('list');
   const [selectedProduct, setSelectedProduct] = useState<typeof PRODUCTS[0] | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   const formatIDR = (val: number) => {
      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
@@ -143,10 +144,10 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
             </p>
 
             <div className="flex flex-col gap-3">
-              <a href="https://shopee.co.id" target="_blank" rel="noreferrer" className="bg-[#ee4d2d] text-white flex items-center gap-2 justify-center py-4 rounded-[1.25rem] font-bold text-[15px] active:scale-[0.98] transition-transform shadow-[0_4px_0_#d73e21]">
+              <a href="#" onClick={(e) => { e.preventDefault(); setShowPopup(true); }} className="bg-[#ee4d2d] text-white flex items-center gap-2 justify-center py-4 rounded-[1.25rem] font-bold text-[15px] active:scale-[0.98] transition-transform shadow-[0_4px_0_#d73e21]">
                 Buy on Shopee
               </a>
-              <a href="https://tokopedia.com" target="_blank" rel="noreferrer" className="bg-[#00AA5B] text-white flex items-center gap-2 justify-center py-4 rounded-[1.25rem] font-bold text-[15px] active:scale-[0.98] transition-transform shadow-[0_4px_0_#008b4b]">
+              <a href="#" onClick={(e) => { e.preventDefault(); setShowPopup(true); }} className="bg-[#00AA5B] text-white flex items-center gap-2 justify-center py-4 rounded-[1.25rem] font-bold text-[15px] active:scale-[0.98] transition-transform shadow-[0_4px_0_#008b4b]">
                 Buy on Tokopedia
               </a>
             </div>
@@ -219,6 +220,24 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
   // List View
   return (
     <div className="flex flex-col h-full bg-gray-50 pt-8 px-5 pb-24 overflow-y-auto w-full">
+      {/* Popup Overlay */}
+      {showPopup && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5 px-6 animate-in fade-in" onClick={() => setShowPopup(false)}>
+           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl flex flex-col items-center text-center animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+              <div className="w-16 h-16 bg-brand-light/30 rounded-full flex items-center justify-center mb-4">
+                 <Wind className="w-8 h-8 text-brand" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Notice</h3>
+              <p className="text-gray-600 font-medium leading-relaxed mb-6">
+                 Breathe AI products are only available in Indonesia right now. Check back soon for international shipping!
+              </p>
+              <button onClick={() => setShowPopup(false)} className="btn-primary w-full py-3">
+                 Got it
+              </button>
+           </div>
+        </div>
+      )}
+
       <header className="mb-6 flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 leading-tight">

@@ -106,17 +106,21 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
             <button
               className="card-duo flex items-center gap-3 p-3 text-left border-amber-200 bg-amber-50 shadow-[0_4px_0_var(--color-amber-200)] hover:bg-amber-100 active:translate-y-1 active:shadow-none transition-all"
               onClick={async () => {
-                await addInhalerLog({
-                  timestamp: new Date().toISOString(),
-                  variantUsed: 'automatic-bypass',
-                  context: ['quick-auto-log'],
-                  intensityBefore: 5,
-                  intensityAfter: 0,
-                  isInhalerAvailable: true,
-                  fallbackMethod: null,
-                  notes: 'Auto-logged via quick action'
-                });
-                setShowLogOptions(false);
+                try {
+                  await addInhalerLog({
+                    timestamp: new Date().toISOString(),
+                    variantUsed: 'automatic-bypass',
+                    context: ['quick-auto-log'],
+                    intensityBefore: 5,
+                    intensityAfter: 0,
+                    isInhalerAvailable: true,
+                    fallbackMethod: null,
+                    notes: 'Auto-logged via quick action'
+                  });
+                  setShowLogOptions(false);
+                } catch (err) {
+                  console.error('Failed to log inhaler via quick action:', err);
+                }
               }}
             >
               <div className="w-10 h-10 rounded-xl bg-amber-500 font-bold flex items-center justify-center shrink-0 border-2 border-amber-600 shadow-[0_2px_0_var(--color-amber-600)]">
