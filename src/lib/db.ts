@@ -37,6 +37,8 @@ export interface UserTable {
   miCigarettesTarget?: number;
   miCigarettesSmokedToday?: number;
   miLastLogDate?: string;
+  miPros?: string[];
+  miCons?: string[];
 }
 
 export interface CbtThoughtJournal {

@@ -27,10 +27,10 @@ export function GoalsPage() {
   const quitDate = new Date(profile.quitDate);
   const streakStartDate = profile.lastSmoked ? new Date(profile.lastSmoked) : quitDate;
   
-  const streakDays = differenceInDays(now, streakStartDate);
-  const streakHours = (now.getTime() - streakStartDate.getTime()) / 3600000;
+  const streakHours = Math.max(0, (now.getTime() - streakStartDate.getTime()) / 3600000);
+  const streakDays = Math.floor(streakHours / 24);
   
-  const savedCigarettes = streakDays * profile.cigarettesPerDay;
+  const savedCigarettes = Math.floor(streakDays * profile.cigarettesPerDay);
 
   const resistedCount = state.cravings.filter(c => c.outcome === 'resisted').length;
 

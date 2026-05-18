@@ -7,7 +7,7 @@ const PRODUCTS = [
   {
     id: "device-starter",
     name: "Breathe AI Smart Inhaler by Patchouni - Starter Kit",
-    price: 89.99,
+    price: 60000,
     description: "The complete setup. A smart connected device that tracks your usage, plus 3 curated pods for cravings.",
     educational: "Nicotine Replacement Therapy (NRT) is effective, but often lacks the behavioral component. Breathe AI by Patchouni pairs physical sensation with cognitive tracking.",
     features: ["Bluetooth Sync", "Haptic Feedback", "Includes 3 Pods (Cool Mint, Warm Bitter, Spicy Herbal)"],
@@ -18,7 +18,7 @@ const PRODUCTS = [
   {
     id: "pod-mint",
     name: "Cool-Mint Flavor Pod (3-Pack)",
-    price: 14.99,
+    price: 60000,
     description: "Best for stress and fatigue. Gives a sharp, cold hit that overrides the amygdala's panic response.",
     educational: "Cold sensations simulate deep breathing and reset the vagus nerve, instantly lowering heart rate during a craving.",
     features: ["Zero Nicotine", "Medical Grade Silicone", "Lasts ~300 puffs"],
@@ -29,7 +29,7 @@ const PRODUCTS = [
   {
     id: "pod-warm",
     name: "Warm-Bitter Flavor Pod (3-Pack)",
-    price: 14.99,
+    price: 60000,
     description: "Perfect replacement for the post-meal craving. Simulates the harshness of a real cigarette without the toxins.",
     educational: "Bitter taste receptors in the throat suppress the urge to inhale deeply, satisfying the 'throat hit' craving commonly missed by quitters.",
     features: ["Zero Nicotine", "Throat Hit Focus", "Lasts ~300 puffs"],
@@ -40,7 +40,7 @@ const PRODUCTS = [
   {
     id: "pod-spicy",
     name: "Spicy-Herbal Flavor Pod (3-Pack)",
-    price: 14.99,
+    price: 60000,
     description: "Ideal for focus and breaks. A stimulating blend that wakes up the senses.",
     educational: "Spicy sensations release endorphins (the body's natural painkillers), providing a healthier neuro-reward than dopamine from nicotine.",
     features: ["Zero Nicotine", "Endorphin Trigger", "Lasts ~300 puffs"],
@@ -52,8 +52,12 @@ const PRODUCTS = [
 
 export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
   const [cart, setCart] = useState<{id: string, qty: number}[]>([]);
-  const [view, setView] = useState<'list' | 'detail' | 'cart' | 'checkout' | 'success'>('list');
+  const [view, setView] = useState<'list' | 'detail' | 'cart'>('list');
   const [selectedProduct, setSelectedProduct] = useState<typeof PRODUCTS[0] | null>(null);
+
+  const formatIDR = (val: number) => {
+     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+  };
 
   const addToCart = (id: string) => {
     setCart(prev => {
@@ -86,57 +90,6 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
     }, 0);
   };
 
-  if (view === 'success') {
-    return (
-      <div className="flex flex-col h-full bg-brand-surface pt-12 px-5 pb-24 overflow-y-auto w-full items-center justify-center text-center">
-        <div className="w-32 h-32 bg-brand rounded-full flex items-center justify-center mb-6 shadow-[0_8px_0_var(--color-brand-dark)] animate-bounce border-4 border-white">
-          <CheckCircle2 className="w-16 h-16 text-white" />
-        </div>
-        <h1 className="text-2xl font-bold text-brand-dark leading-tight mb-3">You got it!</h1>
-        <p className="text-brand-dark/80 font-medium text-sm mb-8 max-w-sm">
-          Your order has been placed successfully. Thank you for investing in your health.
-        </p>
-        <button onClick={() => setActiveTab('inhaler')} className="btn-primary w-full">
-          Back to Inhaler
-        </button>
-      </div>
-    );
-  }
-
-  if (view === 'checkout') {
-    return (
-      <div className="flex flex-col h-full bg-gray-50 pt-8 px-5 pb-24 overflow-y-auto w-full">
-         <header className="mb-6 flex gap-3 items-center">
-          <button onClick={() => setView('cart')} className="w-10 h-10 bg-white rounded-xl border-2 border-gray-200 shadow-[0_4px_0_#E5E7EB] flex items-center justify-center text-gray-500 active:translate-y-1 active:shadow-none transition-all">
-             <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 leading-tight">Checkout</h1>
-        </header>
-
-        <div className="card-duo mb-6">
-           <h2 className="font-bold text-gray-900 mb-4">Total: ${getCartTotal().toFixed(2)}</h2>
-           <div className="space-y-4">
-              <div>
-                 <label className="block text-[10px] font-bold text-gray-500 tracking-wider mb-2">Shipping Address</label>
-                 <input type="text" placeholder="123 Health Ave, CA" className="w-full bg-gray-50 border-2 border-gray-200 p-3 rounded-xl focus:border-brand outline-none text-sm transition-colors" defaultValue="123 Health Ave, CA" />
-              </div>
-              <div>
-                 <label className="block text-[10px] font-bold text-gray-500 tracking-wider mb-2">Card Details</label>
-                 <input type="text" placeholder="**** **** **** 1234" className="w-full bg-gray-50 border-2 border-gray-200 p-3 rounded-xl focus:border-brand outline-none text-sm text-gray-600 transition-colors" defaultValue="**** **** **** 1234" />
-              </div>
-           </div>
-        </div>
-
-        <button onClick={() => { setCart([]); setView('success'); }} className="btn-primary w-full py-4 text-lg hidden md:flex lg:flex xl:flex 2xl:flex flex-row">
-           <ShieldCheck className="w-5 h-5 mr-2" /> Pay ${getCartTotal().toFixed(2)} Securely
-        </button>
-        <button onClick={() => { setCart([]); setView('success'); }} className="btn-primary w-full py-4 text-lg md:hidden lg:hidden xl:hidden 2xl:hidden flex flex-row">
-           <ShieldCheck className="w-5 h-5 mr-2" /> Pay ${getCartTotal().toFixed(2)}
-        </button>
-      </div>
-    );
-  }
-
   if (view === 'cart') {
     return (
       <div className="flex flex-col h-full bg-gray-50 pt-8 px-5 pb-24 overflow-y-auto w-full">
@@ -165,7 +118,7 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 text-sm leading-tight mb-1">{product.name}</h3>
-                      <p className="text-brand font-bold text-sm">${product.price.toFixed(2)}</p>
+                      <p className="text-brand font-bold text-sm">{formatIDR(product.price)}</p>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                        <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-100 rounded-xl px-2 py-1">
@@ -182,12 +135,21 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
             
             <div className="card-duo mb-6 flex justify-between items-center bg-gray-900 text-white border-gray-800 shadow-[0_4px_0_#1f2937]">
                <span className="font-bold text-sm">Total</span>
-               <span className="text-xl font-bold">${getCartTotal().toFixed(2)}</span>
+               <span className="text-xl font-bold">{formatIDR(getCartTotal())}</span>
             </div>
 
-            <button onClick={() => setView('checkout')} className="btn-primary w-full py-4 text-lg">
-              Proceed to Checkout
-            </button>
+            <p className="text-center text-xs font-bold text-gray-500 mb-4 px-4 leading-relaxed">
+              * Breathe AI is currently exclusively available for user shipping and fulfillment in Indonesia.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <a href="https://shopee.co.id" target="_blank" rel="noreferrer" className="bg-[#ee4d2d] text-white flex items-center gap-2 justify-center py-4 rounded-[1.25rem] font-bold text-[15px] active:scale-[0.98] transition-transform shadow-[0_4px_0_#d73e21]">
+                Buy on Shopee
+              </a>
+              <a href="https://tokopedia.com" target="_blank" rel="noreferrer" className="bg-[#00AA5B] text-white flex items-center gap-2 justify-center py-4 rounded-[1.25rem] font-bold text-[15px] active:scale-[0.98] transition-transform shadow-[0_4px_0_#008b4b]">
+                Buy on Tokopedia
+              </a>
+            </div>
           </>
         )}
       </div>
@@ -222,7 +184,7 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
         <div className="card-duo mb-6 bg-brand/5 border-2 border-brand/20 shadow-[0_4px_0_var(--color-brand-light)]">
            <div className="flex justify-between items-center mb-2">
              <span className="text-[10px] font-bold text-brand tracking-wider">Price</span>
-             <span className="text-xl font-bold text-brand-dark">${selectedProduct.price.toFixed(2)}</span>
+             <span className="text-xl font-bold text-brand-dark">{formatIDR(selectedProduct.price)}</span>
            </div>
            <p className="font-medium text-brand-dark/80 text-sm leading-relaxed">{selectedProduct.description}</p>
         </div>
@@ -247,8 +209,8 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
            </ul>
         </div>
 
-        <button onClick={() => { addToCart(selectedProduct.id); setView('cart'); }} className="btn-primary w-full py-4 text-lg">
-           Add to Cart - ${selectedProduct.price.toFixed(2)}
+        <button onClick={() => { addToCart(selectedProduct.id); setView('cart'); }} className="btn-primary w-full py-4 text-xl flex justify-center text-center">
+           Add to Cart
         </button>
       </div>
     );
@@ -289,7 +251,7 @@ export function ShopPage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
                        <p className="text-gray-500 font-medium text-[10px] line-clamp-2 leading-relaxed">{product.description}</p>
                      </div>
                      <div className="flex justify-between items-center mt-2">
-                        <span className="font-bold text-brand text-sm">${product.price.toFixed(2)}</span>
+                        <span className="font-bold text-brand text-sm">{formatIDR(product.price)}</span>
                         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
                            <ChevronRight className="w-5 h-5"/>
                         </div>

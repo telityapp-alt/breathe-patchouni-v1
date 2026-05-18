@@ -56,7 +56,7 @@ export function AnalyticsPage() {
       const resisted = weekCravings.filter(c => c.outcome === 'resisted').length;
       return {
         week: `W${4 - i}`,
-        rate: weekCravings.length > 0 ? Math.round((resisted / weekCravings.length) * 100) : 0
+        rate: weekCravings.length > 0 ? Math.round((resisted / weekCravings.length) * 100) : 100 // 100% if no cravings = success
       };
     });
   }, [cravings]);
@@ -182,8 +182,8 @@ export function AnalyticsPage() {
     // Count activities in last 7 days
     const weekAgo = subDays(now, 7);
     let count = 0;
-    if (currentMethod === 'cbt') count = state.cbtThoughtJournals?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
-    if (currentMethod === 'act') count = state.actUrgeSurfs?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
+    if (currentMethod === 'cbt') count = state.cbtJournals?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
+    if (currentMethod === 'act') count = state.actUrges?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
     if (currentMethod === 'mindfulness') count = state.mindfulnessLogs?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
     if (currentMethod === 'mi') count = state.miReductionLogs?.filter(x => new Date(x.date || x.timestamp) >= weekAgo).length || 0;
     if (currentMethod === 'habit') count = state.habitLogs?.filter(x => new Date(x.timestamp) >= weekAgo).length || 0;
@@ -198,8 +198,9 @@ export function AnalyticsPage() {
      const currentResRate = resistanceWeekData[3].rate;
      const resScore = (currentResRate / 100) * 25;
 
-     // Trend (20%) - freq decreasing
-     const freqDec = trajectoryData[29].frequency <= trajectoryData[0].frequency ? 20 : 0; // naive
+     const last7Freq = trajectoryData.slice(-7).reduce((a, b) => a + b.frequency, 0);
+     const prev7Freq = trajectoryData.slice(-14, -7).reduce((a, b) => a + b.frequency, 0);
+     const freqDec = last7Freq <= prev7Freq ? 20 : 0;
 
      // Engagement (20%)
      const engScore = Math.min((methodEngagementScore / 5) * 20, 20);
@@ -457,14 +458,18 @@ export function AnalyticsPage() {
 
                <div className="card-duo border-gray-200 bg-white">
                   <h3 className="font-bold text-gray-800 mb-2 text-sm flex items-center justify-between">
-                     Response Latency Estimator (Beta)
+                     Keampuhan Inhaler Rata-rata
                   </h3>
-                  <p className="text-xs font-medium text-gray-500 mb-3">Estimasi waktu onset aksi dari dihirupnya PATCHWORK hingga dropnya intensitas craving.</p>
+                  <p className="text-xs font-medium text-gray-500 mb-3">Penurunan intensitas rata-rata setelah menggunakan PATCHWORK.</p>
                   <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                     <span className="text-4xl font-bold text-brand tracking-tighter">3.2</span>
+                     <span className="text-4xl font-bold text-brand tracking-tighter">
+                        {inhalerLogs.filter(l => l.intensityAfter !== null && l.intensityAfter < l.intensityBefore).length > 0 
+                           ? (inhalerLogs.filter(l => l.intensityAfter !== null && l.intensityAfter < l.intensityBefore).reduce((acc, l) => acc + (l.intensityBefore - l.intensityAfter!), 0) / inhalerLogs.filter(l => l.intensityAfter !== null && l.intensityAfter < l.intensityBefore).length).toFixed(1)
+                           : "0"}
+                     </span>
                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-gray-700">Menit rata-rata</span>
-                        <span className="text-[10px] font-bold tracking-widest text-gray-400">Onset of relief</span>
+                        <span className="text-sm font-bold text-gray-700">Poin Penurunan</span>
+                        <span className="text-[10px] font-bold tracking-widest text-gray-400">Rata-rata intensitas craving drop</span>
                      </div>
                   </div>
                </div>

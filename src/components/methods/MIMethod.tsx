@@ -58,10 +58,28 @@ export default function MIMethod() {
   };
   
   // Ambivalence Sheet
-  const [pros, setPros] = useState<string[]>(['It helps me relax', 'Takes away the craving']);
-  const [cons, setCons] = useState<string[]>(['Costs too much', 'Makes me cough']);
+  const [pros, setPros] = useState<string[]>(state.profile?.miPros || ['It helps me relax', 'Takes away the craving']);
+  const [cons, setCons] = useState<string[]>(state.profile?.miCons || ['Costs too much', 'Makes me cough']);
   const [newPro, setNewPro] = useState('');
   const [newCon, setNewCon] = useState('');
+
+  const handleAddPro = async () => {
+     if(newPro.trim()) {
+        const p = [...pros, newPro.trim()];
+        setPros(p);
+        setNewPro('');
+        await updateProfile({ miPros: p });
+     }
+  };
+
+  const handleAddCon = async () => {
+     if(newCon.trim()) {
+        const c = [...cons, newCon.trim()];
+        setCons(c);
+        setNewCon('');
+        await updateProfile({ miCons: c });
+     }
+  };
 
   const todayStr = new Date().toISOString().split('T')[0];
   const hasLoggedToday = state.profile?.miLastLogDate === todayStr;
@@ -242,7 +260,7 @@ export default function MIMethod() {
                   </ul>
                   <div className="flex gap-2">
                      <input type="text" value={newPro} onChange={e => setNewPro(e.target.value)} placeholder="Add reason..." className="flex-1 text-sm font-medium p-3 rounded-xl border-2 border-brand/20 outline-none focus:border-brand focus:bg-white bg-white/50 transition-colors" />
-                     <button onClick={() => { if(newPro) { setPros([...pros, newPro]); setNewPro(''); } }} className="bg-brand text-white w-12 flex justify-center items-center rounded-xl shadow-[0_2px_0_var(--color-brand-dark)] active:scale-95 transition-transform"><PlusCircle className="w-5 h-5"/></button>
+                     <button onClick={handleAddPro} className="bg-brand text-white w-12 flex justify-center items-center rounded-xl shadow-[0_2px_0_var(--color-brand-dark)] active:scale-95 transition-transform"><PlusCircle className="w-5 h-5"/></button>
                   </div>
                </div>
 
@@ -257,7 +275,7 @@ export default function MIMethod() {
                   </ul>
                   <div className="flex gap-2">
                      <input type="text" value={newCon} onChange={e => setNewCon(e.target.value)} placeholder="Add reason..." className="flex-1 text-sm font-medium p-3 rounded-xl border-2 border-gray-200 outline-none focus:border-brand bg-gray-50 focus:bg-white transition-colors" />
-                     <button onClick={() => { if(newCon) { setCons([...cons, newCon]); setNewCon(''); } }} className="bg-gray-800 text-white w-12 flex justify-center items-center rounded-xl shadow-[0_2px_0_#1f2937] active:scale-95 transition-transform"><PlusCircle className="w-5 h-5"/></button>
+                     <button onClick={handleAddCon} className="bg-gray-800 text-white w-12 flex justify-center items-center rounded-xl shadow-[0_2px_0_#1f2937] active:scale-95 transition-transform"><PlusCircle className="w-5 h-5"/></button>
                   </div>
                </div>
                

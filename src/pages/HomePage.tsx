@@ -12,7 +12,7 @@ export function HomePage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
   
   useEffect(() => {
     async function generateDailyInsight() {
-      if (!profile || !process.env.GEMINI_API_KEY) return;
+      if (!profile) return;
       
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
@@ -56,15 +56,16 @@ export function HomePage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
 
         const statsContext = `Peak Craving Hour: ${peakHourStr}. Dominant Trigger: ${dominantTriggerStr}. Total past 7 days: ${recentCravings.length} cravings.`;
         
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: `Given these stats for a user trying to quit smoking: ${statsContext}. Give a single, highly personalized 1-2 sentence daily insight and actionable tip. Be encouraging and use cognitive behavioral therapy principles.`,
+        const res = await fetch("/api/insight", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ statsContext })
         });
+        const data = await res.json();
 
-        if (response.text) {
+        if (data.content) {
           await addCoachInsight({
-             content: response.text,
+             content: data.content,
              timestamp: new Date().toISOString(),
              isRead: false,
              type: 'daily_dashboard'
@@ -304,9 +305,13 @@ export function HomePage({ setActiveTab }: { setActiveTab: (t: any) => void }) {
             </div>
         ) : insightError ? (
             <div className="text-gray-600 text-sm leading-relaxed font-medium">
-              <p>"Every small step is a victory. Keep focusing on your goal, you can do this."</p>
+              <p>
+                {streakDays > 0 
+                  ? `You are on a solid ${streakDays} days streak! Your resistance is building up steadily. Keep your PATCHWORK close just in case.`
+                  : "Every small step counts. Log your cravings today so we can identify your strongest triggers and tackle them."}
+              </p>
               <span className="block mt-2 text-[10px] text-gray-400 font-bold tracking-widest">
-                *(AI Failed to Connect - Default motivation)*
+                *(Local daily insight)*
               </span>
             </div>
         ) : (

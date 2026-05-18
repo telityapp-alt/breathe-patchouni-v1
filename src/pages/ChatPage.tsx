@@ -4,6 +4,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { Send, Bot, Loader2, Target, CheckCircle2, ThumbsUp, ThumbsDown, Zap, Lightbulb } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { AiConversation, Mission, CoachInsightItem } from '../lib/db';
+import ReactMarkdown from 'react-markdown';
 import { differenceInDays, subDays } from 'date-fns';
 
 export function ChatPage({ setActiveTab }: { setActiveTab?: (tab: any) => void }) {
@@ -110,9 +111,7 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
       setInput('');
       setIsTyping(true);
   
-      try {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        
+      try {        
         const now = new Date();
         const weekAgo = subDays(now, 7);
         const last7cravings = state.cravings.filter(c => new Date(c.timestamp) >= weekAgo);
@@ -120,8 +119,8 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
         const resistanceRate = last7cravings.length ? Math.round((resistedLast7 / last7cravings.length) * 100) : 0;
         
         let methodEngagements = 0;
-        if (state.profile?.quitMethod === 'cbt') methodEngagements = state.cbtThoughtJournals?.length || 0;
-        if (state.profile?.quitMethod === 'act') methodEngagements = state.actUrgeSurfs?.length || 0;
+        if (state.profile?.quitMethod === 'cbt') methodEngagements = state.cbtJournals?.length || 0;
+        if (state.profile?.quitMethod === 'act') methodEngagements = state.actUrges?.length || 0;
         if (state.profile?.quitMethod === 'mindfulness') methodEngagements = state.mindfulnessLogs?.length || 0;
 
         const emotion = detectEmotion(messageText);
@@ -140,97 +139,35 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
         if (resistanceRate > 70 && methodEngagements >= 2) bhiProxy = 'Excellent/Near Freedom';
         else if (resistanceRate < 40) bhiProxy = 'Struggling/Beginner';
 
-        const systemInstruction = `
-        You are Breathe AI by Patchouni, an empathetic, evidence-based cognitive behavioral therapy (CBT) and Motivational Interviewing (MI) coach for quitting smoking.
-        Your persona: You are highly trained but conversational. Don't use words like "seharusnya", "harus", or judge.
-        Respond in the same language as the user (Indonesian/English mix usually).
-        Keep responses SHORT (max 3 sentences) and highly actionable. Validate feelings first. Do NOT give medical advice.
-        
-        --- LIVE CONTEXT INJECTION TARGET ---
-        Active Quit Method: ${state.profile?.quitMethod || 'None'}. Method Engagement: ${methodEngagements} total logs.
-        Days Quit: ${currentDay} days. 
-        Top Triggers: ${state.profile?.primaryTriggers?.join(', ')}.
-        Resistance Rate (Last 7 Days): ${resistanceRate}% (${last7cravings.length} total cravings).
-        Top Mood (7D): ${topMood}.
-        Behavioral Health Index Estimate: ${bhiProxy}.
-        Current Emotion Detected: ${emotion}. Strategy: ${emotion === 'distressed' ? 'Prioritize validation and stabilization.' : emotion === 'motivated' ? 'Set concrete next actions.' : 'Explore without pressure.'}
-        `;
-  
-        // Rolling summary logic (simplified via sending recent history to avoid token bloat)
         const recentHistory = state.messages.slice(-10).map(m => `${m.role === 'user' ? 'User' : 'Coach'}: ${m.content}`).join('\n');
-        const prompt = `Recent Conversation:\n${recentHistory}\nUser: ${messageText}\nCoach:`;
-  
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: prompt,
-          config: {
-            systemInstruction,
-            temperature: 0.7,
-            tools: [{
-              functionDeclarations: [
-                {
-                  name: 'navigate_feature',
-                  description: 'Opens a specific feature tab. Allowed tabs: "log", "inhaler_log", "analytics", "shop", "method", "goals", "tools", "home"',
-                  parameters: {
-                    type: Type.OBJECT,
-                    properties: {
-                      tabName: {
-                        type: Type.STRING,
-                      }
-                    },
-                    required: ['tabName']
-                  }
-                },
-                {
-                  name: 'log_craving_for_user',
-                  description: 'Directly record a craving event into the database when the user explicitly says they are having a craving or just had one and want it recorded.',
-                  parameters: {
-                      type: Type.OBJECT,
-                      properties: {
-                          intensity: { type: Type.INTEGER, description: 'Subjective intensity 1-10' },
-                          trigger_category: { type: Type.STRING, description: 'Main trigger (e.g., stress, boredom, social, morning)' },
-                          outcome: { type: Type.STRING, description: '"resisted" or "smoked"' },
-                          notes: { type: Type.STRING }
-                      },
-                      required: ['intensity', 'trigger_category', 'outcome']
-                  }
-                },
-                {
-                  name: 'log_inhaler_for_user',
-                  description: 'Record an inhaler usage event when the user explicitly says they used their inhaler.',
-                  parameters: {
-                      type: Type.OBJECT,
-                      properties: {
-                          intensityBefore: { type: Type.INTEGER, description: 'Craving intensity before using inhaler (1-10)' },
-                          intensityAfter: { type: Type.INTEGER, description: 'Craving intensity after using inhaler (1-10)' },
-                          notes: { type: Type.STRING }
-                      },
-                      required: ['intensityBefore']
-                  }
-                },
-                {
-                  name: 'create_personal_mission',
-                  description: 'Create a new personal mission or challenge for the user. Call this tool when the user asks for a challenge, or when you think the user is ready for a new milestone.',
-                  parameters: {
-                      type: Type.OBJECT,
-                      properties: {
-                          title: { type: Type.STRING },
-                          description: { type: Type.STRING },
-                          targetCount: { type: Type.INTEGER, description: 'Number of times they need to do it to complete the mission' },
-                          relatedMethod: { type: Type.STRING, description: '"cbt", "act", "mindfulness", "mi", "habit", or "general"' }
-                      },
-                      required: ['title', 'description', 'targetCount', 'relatedMethod']
-                  }
-                }
-              ]
-            }]
-          }
-        });
-  
-        let finalReply = response.text || '';
+        
+        const payload = {
+           messageText,
+           recentHistory,
+           methodEngagements,
+           currentDay,
+           primaryTriggers: state.profile?.primaryTriggers || [],
+           resistanceRate,
+           last7cravingsCount: last7cravings.length,
+           topMood,
+           bhiProxy,
+           emotion,
+           quitMethod: state.profile?.quitMethod || 'None'
+        };
 
-        if (response.functionCalls && response.functionCalls.length > 0) {
-           const call = response.functionCalls[0];
+        const res = await fetch("/api/chat", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("API failed");
+        const data = await res.json();
+        let finalReply = data.text || '';
+        const functionCalls = data.functionCalls || [];
+
+        if (functionCalls.length > 0) {
+           const call = functionCalls[0];
            if (call.name === 'navigate_feature' && typeof setActiveTab === 'function') {
               const args = call.args as any;
               setActiveTab(args.tabName);
@@ -318,9 +255,15 @@ function ChatInterface({ setActiveTab }: { setActiveTab?: (tab: any) => void }) 
                <div key={msg.id} className={cn("flex", msg.role === 'user' ? "justify-end" : "justify-start")}>
                   <div className={cn(
                      "max-w-[80%] rounded-[1.25rem] px-5 py-3 text-[15px] font-medium shadow-sm border leading-relaxed",
-                     msg.role === 'user' ? "bg-gray-900 border-gray-900 text-white rounded-br-sm" : "bg-white border-gray-100 text-gray-800 rounded-bl-sm"
+                     msg.role === 'user' ? "bg-gray-900 border-gray-900 text-white rounded-br-sm" : "bg-white border-gray-100 text-gray-800 rounded-bl-sm prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-strong:font-bold"
                   )}>
-                     {msg.content}
+                     {msg.role === 'user' ? (
+                        msg.content
+                     ) : (
+                        <div className="markdown-body">
+                           <ReactMarkdown>{msg.content.replace(/<think>[\s\S]*?<\/think>/g, '')}</ReactMarkdown>
+                        </div>
+                     )}
                   </div>
                </div>
             ))}

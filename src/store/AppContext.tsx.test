@@ -20,7 +20,6 @@ export interface AppState {
   inhalerLogs: InhalerLog[];
   missions: Mission[];
   coachInsights: CoachInsightItem[];
-}
 
 interface AppContextType {
   state: AppState;
@@ -43,7 +42,6 @@ interface AppContextType {
   updateInhalerLog: (id: string, updates: Partial<InhalerLog>) => Promise<void>;
   deleteInhalerLog: (id: string) => Promise<void>;
   clearData: () => Promise<void>;
-}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -94,7 +92,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       await db.users.update(state.profile.id, updates);
     } else {
       await db.users.add({ ...updates, id: uuidv4() } as UserTable);
-    }
   };
 
   const recomputeAnalyticsCache = async (newEvent: Omit<CravingEvent, 'id'>) => {
@@ -109,7 +106,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         totalSmoked: 0,
         lastUpdated: new Date().toISOString()
       };
-    }
     
     // Update trigger
     cache.triggerDistribution[newEvent.trigger_category] = (cache.triggerDistribution[newEvent.trigger_category] || 0) + 1;
@@ -129,11 +125,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
            count: m.count + 1,
            sumIntensity: m.sumIntensity + newEvent.intensity
        };
-    }
 
     cache.lastUpdated = new Date().toISOString();
     await db.analytics_cache.put(cache);
-  }
 
   const checkMilestones = async (): Promise<Milestone | null> => {
     if (!state.profile) return null;
@@ -155,9 +149,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
            if (!exists) {
                unlocked = { id: uuidv4(), key: action.key, title: action.title, description: action.description, timestamp: new Date().toISOString() };
                await db.milestones.add(unlocked);
-           }
-       }
-    }
 
     // Time based
     const streakStartDate = state.profile.lastSmoked ? new Date(state.profile.lastSmoked) : new Date(state.profile.quitDate);
@@ -178,24 +169,20 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
            if (!exists) {
                unlocked = { id: uuidv4(), key: time.key, title: time.title, description: time.description, timestamp: new Date().toISOString() };
                await db.milestones.add(unlocked);
-           }
-        }
-    }
 
     return unlocked;
-  }
 
   const addCraving = async (log: Omit<CravingEvent, 'id'>): Promise<Milestone | null> => {
     const logWithId: CravingEvent = { ...log, id: uuidv4() };
     await db.craving_events.add(logWithId);
     await recomputeAnalyticsCache(logWithId);
 
+
     if (logWithId.outcome === 'smoked' && state.profile) {
       await db.users.update(state.profile.id, { lastSmoked: logWithId.timestamp });
       return null;
     } else {
       return await checkMilestones();
-    }
   };
 
   const addChatMessage = async (msg: Omit<AiConversation, 'id'>) => {
@@ -216,7 +203,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         await db.users.update(state.profile.id, {
             readArticles: newRead
         });
-    }
   };
 
   const addCbtJournal = async (entry: Omit<CbtThoughtJournal, 'id'>) => {
@@ -240,7 +226,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
        await db.habit_loops.update(entry.id, entry);
     } else {
        await db.habit_loops.add(entry as HabitLoop);
-    }
   };
 
   const addHabitLog = async (entry: Omit<HabitLog, 'id'>) => {
@@ -306,6 +291,5 @@ export const useAppContext = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
     throw new Error('useAppContext must be used within an AppProvider');
-  }
   return context;
 };

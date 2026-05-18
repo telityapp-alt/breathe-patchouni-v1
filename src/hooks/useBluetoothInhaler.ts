@@ -19,12 +19,12 @@ export function useBluetoothInhaler() {
     addInhalerLogRef.current({
       timestamp: new Date().toISOString(),
       variantUsed: 'automatic-bypass',
-      context: ['Automatic Trigger'],
+      context: ['Auto (Physical Button)'],
       intensityBefore: 5,
-      intensityAfter: 5,
+      intensityAfter: null,
       isInhalerAvailable: true,
       fallbackMethod: null,
-      notes: 'Auto-logged via Bluetooth / Volume Button.',
+      notes: 'Auto-logged via hardware volume button.',
     }).then(() => {
       setNotification({ show: true, time: now });
       navigator.vibrate?.([100, 50, 100]);

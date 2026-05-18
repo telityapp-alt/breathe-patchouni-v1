@@ -120,7 +120,8 @@ export default function MindfulnessMethod() {
      alert("You paused and took a deep breath. Good job.");
   };
 
-  const bellMinutesLeft = bellIntervalHr ? Math.round((Math.random() * bellIntervalHr * 60) % 60) : 0; // Simulated countdown
+  const now = new Date();
+  const bellMinutesLeft = bellIntervalHr ? Math.round(bellIntervalHr * 60 - ((now.getHours() * 60 + now.getMinutes()) % (bellIntervalHr * 60))) : 0;
 
   return (
     <div className="p-4 pt-8 animate-in fade-in slide-in-from-bottom-4">
